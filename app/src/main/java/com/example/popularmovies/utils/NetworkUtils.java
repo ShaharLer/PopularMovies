@@ -2,6 +2,10 @@ package com.example.popularmovies.utils;
 
 import android.net.Uri;
 import android.util.Log;
+import android.widget.ImageView;
+
+import com.example.popularmovies.R;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,4 +71,18 @@ public final class NetworkUtils {
         }
     }
 
+    /**
+     * This method downloads and image to the given image view.
+     *
+     * @param path The suffix of the path to the full image path.
+     * @param view The image view where the image will be rendered to.
+     */
+    public static void downloadImageINtoView(String path, ImageView view) {
+        String apiPrefix = view.getContext().getString(R.string.api_prefix);
+        Picasso.get()
+                .load(apiPrefix + path)
+                .error(R.mipmap.ic_image_not_found_foreground)
+                .fit()
+                .into(view);
+    }
 }

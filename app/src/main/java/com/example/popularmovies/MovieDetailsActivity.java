@@ -2,22 +2,20 @@ package com.example.popularmovies;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MovieDetailsActivity extends AppCompatActivity {
 
-    private TextView originalTitle;
-    private RelativeLayout imageAndDetailsLayout;
-    private LinearLayout detailsLayout;
+    private TextView originalTitleTv;
     private TextView releaseDateTv;
     private TextView voteAverageTv;
     private TextView overviewTv;
@@ -28,12 +26,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
 
-        // Getting the IDs of the layouts
-        originalTitle = findViewById(R.id.original_title);
-        imageAndDetailsLayout = findViewById(R.id.image_and_details_layout);
-        detailsLayout = findViewById(R.id.details_layout);
-
-        // Getting the IDs of the Text/Image Views
+        originalTitleTv = findViewById(R.id.original_title);
         releaseDateTv = findViewById(R.id.release_date);
         voteAverageTv = findViewById(R.id.vote_average);
         overviewTv = findViewById(R.id.overview);
@@ -45,19 +38,14 @@ public class MovieDetailsActivity extends AppCompatActivity {
             return;
         }
 
-        Picasso.get()
-                .load("https://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg")
-                .error(R.mipmap.ic_image_not_found_foreground)
-                .into(imageIv);
+        if (!intent.hasExtra(Intent.EXTRA_TEXT)) {
+            closeOnError();
+            return;
+        }
 
-//        if (intent.hasExtra(Intent.EXTRA_TEXT)) {
-//            String apiPrefix = getString(R.string.api_prefix);
-//            Picasso.get()
-//                    .load(apiPrefix + intent.getStringExtra(Intent.EXTRA_TEXT))
-//                    .fit()
-//                    .into(image);
-//        }
-
+        Movie movie = intent.getParcelableExtra(Intent.EXTRA_TEXT);
+        populateUI(movie);
+        NetworkUtils.downloadImageINtoView(movie.getPosterPath(), imageIv);
     }
 
     private void closeOnError() {
@@ -66,6 +54,48 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
 
     private void populateUI(Movie movie) {
+        if (movie == null) {
+            closeOnError();
+            return;
+        }
 
+        String originalTitle = movie.getOriginalTitle();
+        if (originalTitle != null && !originalTitle.isEmpty()) {
+            originalTitleTv.setText(originalTitle);
+        } else {
+            originalTitleTv.setVisibility(View.GONE);
+        }
+
+        Picasso.get()
+                .load(movie.getPosterPath())
+                .error(R.mipmap.ic_image_not_found_foreground)
+                .into(imageIv);
+
+        String releaseYear = null;
+        String releaseDate = movie.getReleaseDate();
+        if (releaseDate != null && !releaseDate.isEmpty()) {
+            releaseYear = releaseDate.substring(0,4);
+        }
+
+        if (releaseYear != null && !releaseYear.isEmpty()) {
+            releaseDateTv.setText(releaseYear);
+        } else {
+            releaseDateTv.setVisibility(View.GONE);
+        }
+
+        String voteAverage = movie.getVoteAverage();
+        if (voteAverage != null && !voteAverage.isEmpty()) {
+            String averageOutOfTen = voteAverage + getApplicationContext().getString(R.string.vote_average_suffix);
+            voteAverageTv.setText(averageOutOfTen);
+        } else {
+            voteAverageTv.setVisibility(View.GONE);
+        }
+
+        String overview = movie.getOverview();
+        if (overview != null && !overview.isEmpty()) {
+            overviewTv.setText(overview);
+        } else {
+            overviewTv.setVisibility(View.GONE);
+        }
     }
 }

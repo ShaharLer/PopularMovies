@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.utils.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
@@ -36,21 +37,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
-        String apiPrefix = holder.itemView.getContext().getString(R.string.api_prefix);
-        Picasso.get()
-                .load(apiPrefix + mMoviesData[position].getPosterPath())
-                .fit()
-                .into(holder.image);
+        String moviePosterPath = mMoviesData[position].getPosterPath();
+        NetworkUtils.downloadImageINtoView(moviePosterPath, holder.image);
     }
 
     @Override
     public int getItemCount() {
         if (mMoviesData == null) return 0;
         return mMoviesData.length;
-    }
-
-    public Movie[] getMoviesData() {
-        return mMoviesData;
     }
 
     public void setMoviesData(Movie[] moviesData) {

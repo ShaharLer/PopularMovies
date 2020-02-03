@@ -37,7 +37,7 @@ public class JsonUtils {
         String originalTitle = jsonMovieObject.getString(KEY_ORIGINAL_TITLE);
         String posterPath = jsonMovieObject.getString(KEY_POSTER_PATH);
         String overview = jsonMovieObject.getString(KEY_OVERVIEW);
-        float voteAverage = Float.parseFloat(jsonMovieObject.getString(KEY_VOTE_AVERAGE));
+        String voteAverage = jsonMovieObject.getString(KEY_VOTE_AVERAGE);
         String releaseDate = jsonMovieObject.getString(KEY_RELEASE_DATE);
 
         return new Movie(originalTitle, posterPath, overview, voteAverage, releaseDate);

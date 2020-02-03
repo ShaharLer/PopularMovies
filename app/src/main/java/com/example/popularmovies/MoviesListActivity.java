@@ -17,6 +17,10 @@ import android.widget.Toast;
 import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.utils.JsonUtils;
 import com.example.popularmovies.utils.NetworkUtils;
+import com.google.android.flexbox.AlignItems;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayoutManager;
 
 import java.net.URL;
 
@@ -51,6 +55,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         GridLayoutManager layoutManager = new GridLayoutManager(this, NUMBER_OF_MOVIES_COLUMNS);
+//        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
+//        layoutManager.setFlexWrap(FlexWrap.WRAP);
+//        layoutManager.setFlexDirection(FlexDirection.ROW);
+//        layoutManager.setAlignItems(AlignItems.STRETCH);
         mMoviesRecyclerView.setLayoutManager(layoutManager);
         mMoviesRecyclerView.setHasFixedSize(true);
         mMoviesAdapter = new MoviesAdapter(this);
