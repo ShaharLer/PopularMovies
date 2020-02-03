@@ -62,7 +62,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         Context context = this;
         Class destinationClass = MovieDetailsActivity.class;
         Intent intent = new Intent(context, destinationClass);
-        intent.putExtra(Intent.EXTRA_TEXT, chosenMovie.getPosterPath());
+        intent.putExtra(Intent.EXTRA_TEXT, chosenMovie);
         startActivity(intent);
     }
 

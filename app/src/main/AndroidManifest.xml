@@ -12,7 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MoviesListActivity">
+            android:name=".MoviesListActivity"
+            android:label="@string/movies_list_label">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -20,6 +21,7 @@
         </activity>
         <activity
             android:name=".MovieDetailsActivity"
+            android:label="@string/movies_detail_label"
             android:parentActivityName=".MoviesListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

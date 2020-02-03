@@ -24,6 +24,26 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
+    private Movie(Parcel in) {
+        originalTitle = in.readString();
+        posterPath = in.readString();
+        overview = in.readString();
+        voteAverage = in.readFloat();
+        releaseDate = in.readString();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
     public String getOriginalTitle() {
         return originalTitle;
     }
@@ -71,6 +91,10 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
+        dest.writeString(originalTitle);
+        dest.writeString(posterPath);
+        dest.writeString(overview);
+        dest.writeFloat(voteAverage);
+        dest.writeString(releaseDate);
     }
 }
