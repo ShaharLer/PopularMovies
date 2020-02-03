@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Popular Movies</string>
+    <string name="api_prefix">https://image.tmdb.org/t/p/w185</string>
+    <string name="api_key">enter_api_key</string>
+    <string name="movie_image_description">The poster image of the movie</string>
+    <string name="popular">Most popular</string>
+    <string name="top_rated">Top rated</string>
+    <string-array name="sort_categories_array">
+        <item>@string/popular</item>
+        <item>@string/top_rated</item>
+    </string-array>
 </resources>
