@@ -2,17 +2,24 @@
 <resources>
     <dimen name="details_activity_margin">10dp</dimen>
     <dimen name="details_activity_title_padding_top_bottom">30dp</dimen>
+    <dimen name="details_activity_title_padding_top_bottom_land">12dp</dimen>
     <dimen name="details_activity_image_details_margin_top">6dp</dimen>
     <dimen name="details_activity_overview_padding_top">20dp</dimen>
     <dimen name="details_activity_padding_horizontal">24dp</dimen>
     <dimen name="details_activity_layout_padding">45dp</dimen>
+    <dimen name="details_activity_layout_padding_land">25dp</dimen>
     <dimen name="original_title_size">30sp</dimen>
     <dimen name="details_activity_overview_text_size">16sp</dimen>
     <dimen name="vote_average_text_size">16sp</dimen>
     <dimen name="release_date_padding_bottom">8dp</dimen>
+    <dimen name="release_date_padding_bottom_land">4dp</dimen>
+    <dimen name="vote_average_padding_bottom_land">12dp</dimen>
     <dimen name="release_date_text_size">24sp</dimen>
     <dimen name="image_padding_top">6dp</dimen>
     <dimen name="details_activity_image_width">125dp</dimen>
     <dimen name="details_activity_image_height">200dp</dimen>
     <dimen name="movie_item_image_height">310dp</dimen>
+    <dimen name="progress_bar_dimension">42dp</dimen>
+    <dimen name="details_activity_padding_bottom">10dp</dimen>
+    <dimen name="details_layout_padding_start">1dp</dimen>
 </resources>

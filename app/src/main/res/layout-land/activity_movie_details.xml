@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MovieDetailsActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/details_activity_padding_bottom">
+
+        <TextView
+            android:id="@+id/original_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorMovieTitle"
+            android:paddingStart="@dimen/details_activity_padding_horizontal"
+            android:paddingEnd="@dimen/details_activity_padding_horizontal"
+            android:paddingTop="@dimen/details_activity_title_padding_top_bottom_land"
+            android:paddingBottom="@dimen/details_activity_title_padding_top_bottom_land"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/original_title_size" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/details_activity_padding_horizontal"
+            android:layout_marginEnd="@dimen/details_activity_padding_horizontal"
+            android:paddingTop="5dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/movie_details_image"
+                android:layout_width="@dimen/details_activity_image_width"
+                android:layout_height="@dimen/details_activity_image_height"
+                android:contentDescription="@string/movie_image_description"
+                android:paddingTop="@dimen/image_padding_top"
+                android:scaleType="fitXY" />
+
+                <LinearLayout
+                    android:id="@+id/details_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/details_activity_layout_padding_land"
+                    android:layout_toEndOf="@+id/movie_details_image"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/release_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/release_date_padding_bottom_land"
+                        android:textSize="@dimen/release_date_text_size" />
+
+                    <TextView
+                        android:id="@+id/vote_average"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:layout_marginStart="@dimen/details_layout_padding_start"
+                        android:paddingBottom="@dimen/vote_average_padding_bottom_land"
+                        android:textSize="@dimen/vote_average_text_size" />
+
+                    <TextView
+                        android:id="@+id/overview"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="@dimen/details_layout_padding_start"
+                        android:textSize="@dimen/details_activity_overview_text_size" />
+                </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</ScrollView>
