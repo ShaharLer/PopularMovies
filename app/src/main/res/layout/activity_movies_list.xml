@@ -8,12 +8,40 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_movies"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:id="@+id/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="@dimen/error_message_horizontal_padding"
+            android:paddingEnd="@dimen/error_message_horizontal_padding"
+            android:text="@string/error_message"
+            android:textSize="@dimen/error_message_text_size"
+            android:textColor="@android:color/black"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/refresh_button_margin_top"
+            android:text="@string/refresh_button_text"
+            style="@style/TextAppearance.AppCompat.Button"
+            android:onClick="refreshData"/>
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator"
-        android:layout_height="@dimen/progress_bar_dimension"
         android:layout_width="@dimen/progress_bar_dimension"
+        android:layout_height="@dimen/progress_bar_dimension"
         android:layout_gravity="center" />
 
 </FrameLayout>

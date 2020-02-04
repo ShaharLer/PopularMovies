@@ -1,6 +1,5 @@
 package com.example.popularmovies;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -9,14 +8,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
-import android.widget.Toast;
 
 import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.utils.JsonUtils;
@@ -31,7 +28,6 @@ import androidx.recyclerview.widget.RecyclerView;
 public class MoviesListActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
     private static final String TAG = MoviesListActivity.class.getSimpleName();
-    private static final String SPINNER_TOP_RATED = "highest rated";
     private static final String SORT_POPULAR = "popular";
     private static final String SORT_TOP_RATED = "top_rated";
     private static final int PORTRAIT_MOVIES_COLUMNS = 2;
@@ -39,10 +35,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
     private static String spinnerPopular;
     private static String spinnerTopRated;
-    private String selectedCategory = "";
     private RecyclerView mMoviesRecyclerView;
     private MoviesAdapter mMoviesAdapter;
     private ProgressBar mProgressBar;
+    private LinearLayout mErrorLayout;
     private Spinner mSpinner;
 
     @Override
@@ -52,8 +48,9 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
         spinnerPopular = getString(R.string.popular);
         spinnerTopRated = getString(R.string.top_rated);
-        mProgressBar = findViewById(R.id.pb_loading_indicator);
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
+        mErrorLayout = findViewById(R.id.error_layout);
+        mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         mMoviesRecyclerView.setHasFixedSize(true);
         mMoviesAdapter = new MoviesAdapter(this);
@@ -70,6 +67,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 //        final float scale = getResources().getDisplayMetrics().density;
 //        ImageView iv = findViewById(R.id.movie_poster);
 //        iv.getLayoutParams().height = (int) (300 * scale);
+        loadMoviesData(SORT_POPULAR);
     }
 
     @Override
@@ -88,26 +86,19 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getBaseContext(),
                 R.array.sort_categories_array, android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mSpinnerAdapter);
+        mSpinner.setSelection(0, false);
         mSpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Object item = parent.getItemAtPosition(position);
-                        String category = item.toString();
+                        String category = (String) parent.getItemAtPosition(position);
 
                         if (category.equals(spinnerPopular)) {
-                            if (!selectedCategory.equals(spinnerPopular)) {
-                                new FetchMoviesTask().execute(SORT_POPULAR);
-                                selectedCategory = spinnerPopular;
-                            }
+                            loadMoviesData(SORT_POPULAR);
                         } else if (category.equals(spinnerTopRated)) {
-                            if (!selectedCategory.equals(spinnerTopRated)) {
-                                new FetchMoviesTask().execute(SORT_TOP_RATED);
-                                selectedCategory = spinnerTopRated;
-                            }
+                            loadMoviesData(SORT_TOP_RATED);
                         } else {
-                            Log.d(TAG, "Failed to parse the selected spinner item");
-                            // Error message
+                            showErrorMessage();
                         }
                     }
 
@@ -121,21 +112,30 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     }
 
     /**
-     * This method will make the View for the movies data visible and
-     * hide the error message.
+     * This method will execute the method to fetch the movies list according to the given category.
+     *
+     * @param sortCategory The category that will decide the sort order for the movies list.
      */
-    private void showMoviesData() {
-        mMoviesRecyclerView.setVisibility(View.VISIBLE);
+    private void loadMoviesData(String sortCategory) {
+        new FetchMoviesTask().execute(sortCategory);
     }
-
 
     /**
      * This method will make the error message visible and hide the movies View.
      */
     private void showErrorMessage() {
         mMoviesRecyclerView.setVisibility(View.INVISIBLE);
-//        mErrorMessageDisplay.setVisibility(View.VISIBLE);
-//        mSpinner.getSelectedItem().toString();
+        mErrorLayout.setVisibility(View.VISIBLE);
+    }
+
+    /**
+     * The method makes the app execute again the loadMoviesData function when the user clicks it,
+     * after an error occuers.
+     *
+     * @param view The view of the REFRESH button.
+     */
+    public void refreshData(View view) {
+        loadMoviesData(mSpinner.getSelectedItem().toString());
     }
 
     public class FetchMoviesTask extends AsyncTask<String, Void, Movie[]> {
@@ -143,7 +143,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mMoviesRecyclerView.setVisibility(View.GONE);
+            mMoviesRecyclerView.setVisibility(View.INVISIBLE);
+            mErrorLayout.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
         }
 
@@ -171,10 +172,9 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         protected void onPostExecute(Movie[] movies) {
             mProgressBar.setVisibility(View.INVISIBLE);
             if (movies != null) {
-                showMoviesData();
                 mMoviesAdapter.setMoviesData(movies);
+                mMoviesRecyclerView.setVisibility(View.VISIBLE);
             } else {
-                Log.d(TAG, "movies object is null");
                 showErrorMessage();
             }
         }

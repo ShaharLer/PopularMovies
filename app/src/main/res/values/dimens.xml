@@ -22,4 +22,7 @@
     <dimen name="progress_bar_dimension">42dp</dimen>
     <dimen name="details_activity_padding_bottom">10dp</dimen>
     <dimen name="details_layout_padding_start">1dp</dimen>
+    <dimen name="error_message_text_size">20sp</dimen>
+    <dimen name="error_message_horizontal_padding">16dp</dimen>
+    <dimen name="refresh_button_margin_top">20dp</dimen>
 </resources>
