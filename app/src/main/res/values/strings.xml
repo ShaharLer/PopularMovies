@@ -10,6 +10,7 @@
     <string name="vote_average_suffix">/10</string>
 
     <string name="detail_error_message">Sandwich data not available</string>
+    <string name="poster_image_description">The poster image of the movie</string>
 
     <string-array name="sort_categories_array">
         <item>@string/popular</item>

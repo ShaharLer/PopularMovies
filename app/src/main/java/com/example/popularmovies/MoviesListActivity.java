@@ -1,14 +1,18 @@
 package com.example.popularmovies;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
@@ -17,10 +21,6 @@ import android.widget.Toast;
 import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.utils.JsonUtils;
 import com.example.popularmovies.utils.NetworkUtils;
-import com.google.android.flexbox.AlignItems;
-import com.google.android.flexbox.FlexDirection;
-import com.google.android.flexbox.FlexWrap;
-import com.google.android.flexbox.FlexboxLayoutManager;
 
 import java.net.URL;
 
@@ -34,7 +34,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     private static final String SPINNER_TOP_RATED = "highest rated";
     private static final String SORT_POPULAR = "popular";
     private static final String SORT_TOP_RATED = "top_rated";
-    private static final int NUMBER_OF_MOVIES_COLUMNS = 2;
+    private static final int PORTRAIT_MOVIES_COLUMNS = 2;
+    private static final int LANDSCAPE_MOVIES_COLUMNS = 4;
 
     private static String spinnerPopular;
     private static String spinnerTopRated;
@@ -51,18 +52,24 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
         spinnerPopular = getString(R.string.popular);
         spinnerTopRated = getString(R.string.top_rated);
-        mMoviesRecyclerView = findViewById(R.id.rv_movies);
         mProgressBar = findViewById(R.id.pb_loading_indicator);
+        mMoviesRecyclerView = findViewById(R.id.rv_movies);
 
-        GridLayoutManager layoutManager = new GridLayoutManager(this, NUMBER_OF_MOVIES_COLUMNS);
-//        FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(this);
-//        layoutManager.setFlexWrap(FlexWrap.WRAP);
-//        layoutManager.setFlexDirection(FlexDirection.ROW);
-//        layoutManager.setAlignItems(AlignItems.STRETCH);
-        mMoviesRecyclerView.setLayoutManager(layoutManager);
         mMoviesRecyclerView.setHasFixedSize(true);
         mMoviesAdapter = new MoviesAdapter(this);
         mMoviesRecyclerView.setAdapter(mMoviesAdapter);
+
+        GridLayoutManager layoutManager;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager = new GridLayoutManager(this, PORTRAIT_MOVIES_COLUMNS);
+        } else {
+            layoutManager = new GridLayoutManager(this, LANDSCAPE_MOVIES_COLUMNS);
+        }
+        mMoviesRecyclerView.setLayoutManager(layoutManager);
+
+//        final float scale = getResources().getDisplayMetrics().density;
+//        ImageView iv = findViewById(R.id.movie_poster);
+//        iv.getLayoutParams().height = (int) (300 * scale);
     }
 
     @Override

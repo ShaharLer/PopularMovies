@@ -7,14 +7,11 @@ import android.widget.ImageView;
 
 import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.utils.NetworkUtils;
-import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>  {
-
-    private static final String TAG = MoviesAdapter.class.getSimpleName();
 
     private Movie[] mMoviesData;
     private final MoviesAdapterOnClickHandler mClickHandler;
@@ -58,7 +55,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         MovieViewHolder(@NonNull View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.movie_image);
+            image = itemView.findViewById(R.id.movie_poster);
             itemView.setOnClickListener(this);
         }
 
