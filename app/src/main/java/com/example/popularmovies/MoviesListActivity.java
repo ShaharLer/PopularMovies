@@ -61,10 +61,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
             layoutManager = new GridLayoutManager(this, LANDSCAPE_MOVIES_COLUMNS);
         }
         mMoviesRecyclerView.setLayoutManager(layoutManager);
-
-//        final float scale = getResources().getDisplayMetrics().density;
-//        ImageView iv = findViewById(R.id.movie_poster);
-//        iv.getLayoutParams().height = (int) (300 * scale);
         loadMoviesData(SORT_POPULAR);
     }
 
@@ -142,6 +138,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         protected void onPreExecute() {
             super.onPreExecute();
             mMoviesRecyclerView.setVisibility(View.INVISIBLE);
+            mMoviesRecyclerView.smoothScrollToPosition(0);
             mErrorLayout.setVisibility(View.INVISIBLE);
             mProgressBar.setVisibility(View.VISIBLE);
         }
