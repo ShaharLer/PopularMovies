@@ -5,6 +5,6 @@
     <item android:id="@+id/spinner"
         yourapp:showAsAction="always"
         yourapp:actionViewClass="android.widget.Spinner"
-        android:title="Sort by" />
+        android:title="@string/spinner_title" />
 
 </menu>

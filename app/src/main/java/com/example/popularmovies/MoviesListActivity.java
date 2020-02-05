@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,7 +26,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class MoviesListActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
-    private static final String TAG = MoviesListActivity.class.getSimpleName();
     private static final String SORT_POPULAR = "popular";
     private static final String SORT_TOP_RATED = "top_rated";
     private static final int PORTRAIT_MOVIES_COLUMNS = 2;
@@ -53,7 +51,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         mProgressBar = findViewById(R.id.pb_loading_indicator);
 
         mMoviesRecyclerView.setHasFixedSize(true);
-        mMoviesAdapter = new MoviesAdapter(this);
+        mMoviesAdapter = new MoviesAdapter(this, this);
         mMoviesRecyclerView.setAdapter(mMoviesAdapter);
 
         GridLayoutManager layoutManager;
