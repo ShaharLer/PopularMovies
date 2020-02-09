@@ -111,7 +111,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
      * @param sortCategory The category that will decide the sort order for the movies list.
      */
     private void loadMoviesData(String sortCategory) {
-        new FetchMoviesTask().execute(sortCategory);
+        new FetchMoviesListTask().execute(sortCategory);
     }
 
     /**
@@ -132,7 +132,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         loadMoviesData(mSpinner.getSelectedItem().toString());
     }
 
-    public class FetchMoviesTask extends AsyncTask<String, Void, Movie[]> {
+    public class FetchMoviesListTask extends AsyncTask<String, Void, Movie[]> {
 
         @Override
         protected void onPreExecute() {
@@ -151,7 +151,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
             String sortCriteria = strings[0];
             String apiKey = getResources().getString(R.string.api_key);
-            URL moviesRequestUrl = NetworkUtils.buildUrl(sortCriteria, apiKey);
+            URL moviesRequestUrl = NetworkUtils.buildParameterizedUrl(sortCriteria, apiKey);
 
             try {
                 String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);

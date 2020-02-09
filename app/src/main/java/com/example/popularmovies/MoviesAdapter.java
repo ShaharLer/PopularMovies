@@ -51,7 +51,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         String moviePosterPath = mMoviesData[position].getPosterPath();
         holder.image.getLayoutParams().height = imageViewHeight;
-        NetworkUtils.downloadImageINtoView(moviePosterPath, holder.image);
+        NetworkUtils.downloadImageIntoView(moviePosterPath, holder.image);
     }
 
     /**

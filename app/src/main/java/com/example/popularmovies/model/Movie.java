@@ -5,31 +5,34 @@ import android.os.Parcelable;
 
 public class Movie implements Parcelable {
 
+    private String id;
     private String originalTitle;
     private String posterPath;
     private String overview;
     private String voteAverage;
     private String releaseDate;
+    private String runtime;
 
-    public Movie() {
-    }
+    public Movie(String id, String originalTitle, String posterPath, String overview,
+                 String voteAverage, String releaseDate, String runtime) {
 
-    public Movie(String originalTitle, String posterPath, String overview, String voteAverage,
-                 String releaseDate) {
-
+        this.id = id;
         this.originalTitle = originalTitle;
         this.posterPath = posterPath;
         this.overview = overview;
         this.voteAverage = voteAverage;
         this.releaseDate = releaseDate;
+        this.runtime = runtime;
     }
 
     private Movie(Parcel in) {
+        id = in.readString();
         originalTitle = in.readString();
         posterPath = in.readString();
         overview = in.readString();
         voteAverage = in.readString();
         releaseDate = in.readString();
+        runtime = in.readString();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -43,6 +46,14 @@ public class Movie implements Parcelable {
             return new Movie[size];
         }
     };
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getOriginalTitle() {
         return originalTitle;
@@ -84,6 +95,14 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
+    public String getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(String runtime) {
+        this.runtime = runtime;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -91,10 +110,12 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
         dest.writeString(originalTitle);
         dest.writeString(posterPath);
         dest.writeString(overview);
         dest.writeString(voteAverage);
         dest.writeString(releaseDate);
+        dest.writeString(runtime);
     }
 }
