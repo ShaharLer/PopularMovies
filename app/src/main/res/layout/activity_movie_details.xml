@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".MovieDetailsActivity">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -44,13 +44,12 @@
                     android:paddingTop="@dimen/image_padding_top"
                     android:scaleType="fitXY" />
 
-                <LinearLayout
+                <RelativeLayout
                     android:id="@+id/details_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/details_activity_layout_padding"
-                    android:layout_toEndOf="@+id/movie_details_image"
-                    android:orientation="vertical">
+                    android:layout_toEndOf="@+id/movie_details_image">
 
                     <TextView
                         android:id="@+id/release_date"
@@ -64,6 +63,7 @@
                         android:id="@+id/runtime"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/release_date"
                         android:paddingBottom="@dimen/runtime_padding_bottom"
                         android:textSize="@dimen/runtime_text_size"
                         android:textStyle="italic" />
@@ -72,6 +72,7 @@
                         android:id="@+id/vote_average"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_below="@id/runtime"
                         android:layout_marginStart="@dimen/details_layout_padding_start"
                         android:paddingBottom="@dimen/vote_average_padding_bottom"
                         android:textColor="@android:color/black"
@@ -79,13 +80,11 @@
 
                     <Button
                         android:id="@+id/mark_as_favorite"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/details_layout_padding_start"
-                        android:background="@color/colorMarkAsFavorite"
-                        android:text="@string/mark_as_favorite_button_text" />
-
-                </LinearLayout>
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_below="@id/vote_average"
+                        android:background="@drawable/ic_star_border_black_24dp" />
+                </RelativeLayout>
 
             </RelativeLayout>
 
@@ -93,12 +92,74 @@
                 android:id="@+id/overview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/details_activity_margin"
+                android:layout_marginStart="@dimen/details_activity_margin"
+                android:layout_marginEnd="@dimen/details_activity_margin"
                 android:paddingTop="@dimen/details_activity_overview_padding_top"
                 android:textSize="@dimen/details_activity_overview_text_size" />
+
+            <LinearLayout
+                android:id="@+id/trailer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/trailers_layout_margin_top"
+                android:layout_marginStart="@dimen/details_activity_margin"
+                android:layout_marginEnd="@dimen/details_activity_margin"
+                android:orientation="vertical">
+
+                <View
+                    android:id="@+id/before_trailers_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/divider_height"
+                    android:layout_marginBottom="@dimen/trailers_divider_margin_bottom"
+                    android:background="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/trailers_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trailers_title"
+                    android:textSize="@dimen/trailers_title_size" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/reviews_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/reviews_layout_margin_top"
+                android:layout_marginStart="@dimen/details_activity_margin"
+                android:layout_marginEnd="@dimen/details_activity_margin"
+                android:orientation="vertical">
+
+                <View
+                    android:id="@+id/before_reviews_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/divider_height"
+                    android:layout_marginBottom="@dimen/reviews_divider_margin_bottom"
+                    android:background="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/reviews_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reviews_title"
+                    android:textSize="@dimen/reviews_title_size" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator_details_activity"

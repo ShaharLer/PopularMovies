@@ -34,13 +34,13 @@ public final class NetworkUtils {
     }
 
     /**
-     * This method calls buildUrl to get a URL that will be used to query movie's trailers from themoviedb.org .
+     * This method calls buildUrl to get a URL that will be used to query movie's videos from themoviedb.org .
      *
      * @param id The movie id.
      * @param apiKey The api key to work with the themoviedb.org API.
      * @return A URL to query a the trailers of movies by category from themoviedb.org .
      */
-    public static URL buildTrailersUrl(String id, String apiKey) {
+    public static URL buildVideosUrl(String id, String apiKey) {
         return buildUrl(MOVIES_SORT_BASE_URL + id + MOVIE_TRAILERS_URL_SUFFIX, apiKey);
     }
 
@@ -51,7 +51,7 @@ public final class NetworkUtils {
      * @param apiKey The api key to work with the themoviedb.org API.
      * @return
      */
-    public static URL buildReviewsUrl(int id, String apiKey) {
+    public static URL buildReviewsUrl(String id, String apiKey) {
         return buildUrl(MOVIES_SORT_BASE_URL + id + MOVIE_REVIEWS_URL_SUFFIX, apiKey);
     }
 

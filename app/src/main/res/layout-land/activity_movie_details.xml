@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".MovieDetailsActivity">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -99,12 +99,12 @@
 
                             <Button
                                 android:id="@+id/mark_as_favorite"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
                                 android:layout_marginTop="8dp"
-                                android:background="@color/colorMarkAsFavorite"
-                                android:text="@string/mark_as_favorite_button_text" />
+                                android:layout_marginEnd="12dp"
+                                android:layout_gravity="end"
+                                android:background="@drawable/ic_star_border_black_24dp" />
                         </FrameLayout>
 
                     </LinearLayout>
@@ -121,9 +121,69 @@
 
             </RelativeLayout>
 
+            <LinearLayout
+                android:id="@+id/trailer_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/trailers_layout_margin_top"
+                android:layout_marginStart="@dimen/trailers_layout_margin_land"
+                android:layout_marginEnd="@dimen/trailers_layout_margin_land"
+                android:orientation="vertical">
+
+                <View
+                    android:id="@+id/before_trailers_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/divider_height"
+                    android:layout_marginBottom="@dimen/trailers_divider_margin_bottom"
+                    android:background="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/trailers_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/trailers_title"
+                    android:textSize="@dimen/trailers_title_size" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/reviews_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/reviews_layout_margin_top"
+                android:layout_marginStart="@dimen/details_activity_margin"
+                android:layout_marginEnd="@dimen/details_activity_margin"
+                android:orientation="vertical">
+
+                <View
+                    android:id="@+id/before_reviews_divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/divider_height"
+                    android:layout_marginBottom="@dimen/reviews_divider_margin_bottom"
+                    android:background="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/reviews_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/reviews_title"
+                    android:textSize="@dimen/reviews_title_size" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
         </LinearLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <ProgressBar
         android:id="@+id/pb_loading_indicator_details_activity"

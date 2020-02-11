@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="13dp"
+    android:orientation="horizontal">
+
+    <!-- TODO extract to strings.xml and dimens.xml -->
+
+    <ImageView
+        android:id="@+id/play_trailer"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/ic_play_arrow_black_24dp"
+        android:contentDescription="@string/play_trailer_description" />
+
+    <ImageView
+        android:id="@+id/share_trailer"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="7dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/ic_share_black_24dp"
+        android:contentDescription="@string/share_trailer_description" />
+
+    <TextView
+        android:id="@+id/trailer_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textSize="18sp"/>
+
+</LinearLayout>

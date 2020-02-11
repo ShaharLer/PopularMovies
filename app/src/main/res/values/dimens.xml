@@ -12,7 +12,7 @@
     <dimen name="details_activity_overview_text_size">16sp</dimen>
     <dimen name="vote_average_text_size">16sp</dimen>
     <dimen name="runtime_padding_bottom">8dp</dimen>
-    <dimen name="vote_average_padding_bottom">24dp</dimen>
+    <dimen name="vote_average_padding_bottom">16dp</dimen>
     <dimen name="release_date_padding_bottom">4dp</dimen>
     <dimen name="release_date_padding_bottom_land">2dp</dimen>
     <dimen name="runtime_padding_bottom_land">6dp</dimen>
@@ -30,4 +30,15 @@
     <dimen name="error_message_text_size">20sp</dimen>
     <dimen name="error_message_horizontal_padding">16dp</dimen>
     <dimen name="refresh_button_margin_top">20dp</dimen>
+    <dimen name="trailers_layout_margin_top">10dp</dimen>
+    <dimen name="reviews_layout_margin_top">10dp</dimen>
+    <dimen name="trailers_layout_margin_end">15dp</dimen>
+    <dimen name="reviews_layout_margin_end">15dp</dimen>
+    <dimen name="trailers_layout_margin_land">20dp</dimen>
+    <dimen name="reviews_layout_margin_land">20dp</dimen>
+    <dimen name="trailers_divider_margin_bottom">15dp</dimen>
+    <dimen name="reviews_divider_margin_bottom">15dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="trailers_title_size">20sp</dimen>
+    <dimen name="reviews_title_size">20sp</dimen>
 </resources>

@@ -1,7 +1,6 @@
 package com.example.popularmovies;
 
 import android.app.Activity;
-import android.app.StatusBarManager;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.DisplayMetrics;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.app.ActionBar;
 
 import com.example.popularmovies.model.Movie;
 import com.example.popularmovies.utils.NetworkUtils;

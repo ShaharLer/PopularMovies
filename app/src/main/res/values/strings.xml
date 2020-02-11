@@ -14,6 +14,11 @@
     <string name="refresh_button_text">REFRESH</string>
     <string name="spinner_title">Sort by</string>
     <string name="mark_as_favorite_button_text">MARK AS\nFAVORITE</string>
+    <string name="trailers_title">Trailers:</string>
+    <string name="reviews_title">Reviews:</string>
+    <string name="play_trailer_description">Image to click in order to see the trailer</string>
+    <string name="share_trailer_description">Image to click in order to share the trailer</string>
+    <string name="review_dialog_back_button">back</string>
 
     <string-array name="sort_categories_array">
         <item>@string/popular</item>
