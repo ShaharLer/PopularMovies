@@ -3,8 +3,10 @@ package com.example.popularmovies;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -22,13 +24,20 @@ import java.net.URL;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class MovieDetailsActivity extends AppCompatActivity implements ReviewsAdapter.ReviewsAdapterOnClickHandler {
+public class MovieDetailsActivity extends AppCompatActivity
+        implements ReviewsAdapter.ReviewsAdapterOnClickHandler,
+                   TrailersAdapter.PlayTrailersHandler,
+                   TrailersAdapter.ShareTrailersHandler {
 
+    private static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    private static final String SHARING_TRAILER_TITLE = "Sharing a movie trailer";
+    private static final String MIME_TYPE_SHARE_TRAILER = "text/plain";
     private static final String GET_RUNTIME = "runtime";
     private static final String GET_VIDEOS = "videos";
     private static final String GET_REVIEWS = "reviews";
@@ -158,7 +167,7 @@ public class MovieDetailsActivity extends AppCompatActivity implements ReviewsAd
             mTrailersRecyclerView.setHasFixedSize(true);
             mTrailersRecyclerView.addItemDecoration(dividerItemDecoration);
             mTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            mTrailersRecyclerView.setAdapter(new TrailersAdapter(videosKeys));
+            mTrailersRecyclerView.setAdapter(new TrailersAdapter(this, this, videosKeys));
         } else {
             mTrailerLayout.setVisibility(View.GONE);
         }
@@ -187,6 +196,26 @@ public class MovieDetailsActivity extends AppCompatActivity implements ReviewsAd
         });
 
         builder.create().show();
+    }
+
+    @Override
+    public void onPlayViewClicked(String videoKey) {
+        String youtubeUrl = YOUTUBE_URL + videoKey;
+        Intent trailerIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(youtubeUrl));
+        if (trailerIntent.resolveActivity(getPackageManager()) != null) {
+            startActivity(trailerIntent);
+        }
+    }
+
+    @Override
+    public void onShareViewClicked(String videoKey) {
+        String youtubeUrl = YOUTUBE_URL + videoKey;
+        ShareCompat.IntentBuilder
+                .from(this)
+                .setType(MIME_TYPE_SHARE_TRAILER)
+                .setChooserTitle(SHARING_TRAILER_TITLE)
+                .setText(youtubeUrl)
+                .startChooser();
     }
 
     public class FetchMovieDetailsTask extends AsyncTask<String, Void, String> {

@@ -3,7 +3,7 @@ package com.example.popularmovies;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,11 +41,11 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
 
     class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageView imageIv;
+        ImageButton imageIb;
 
         ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageIv = itemView.findViewById(R.id.review_image);
+            imageIb = itemView.findViewById(R.id.review_image);
             itemView.setOnClickListener(this);
         }
 

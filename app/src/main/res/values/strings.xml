@@ -19,6 +19,7 @@
     <string name="play_trailer_description">Image to click in order to see the trailer</string>
     <string name="share_trailer_description">Image to click in order to share the trailer</string>
     <string name="review_dialog_back_button">back</string>
+    <string name="open_review_description">Image to click in order to read a review</string>
 
     <string-array name="sort_categories_array">
         <item>@string/popular</item>

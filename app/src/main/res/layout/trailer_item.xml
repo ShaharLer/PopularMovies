@@ -7,21 +7,23 @@
 
     <!-- TODO extract to strings.xml and dimens.xml -->
 
-    <ImageView
+    <ImageButton
         android:id="@+id/play_trailer"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginEnd="20dp"
         android:background="@drawable/ic_play_arrow_black_24dp"
+        android:src="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/play_trailer_description" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/share_trailer"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginTop="7dp"
         android:layout_marginEnd="30dp"
         android:background="@drawable/ic_share_black_24dp"
+        android:src="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/share_trailer_description" />
 
     <TextView
