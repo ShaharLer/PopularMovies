@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.popularmovies.database.AppDatabase;
 import com.example.popularmovies.database.Movie;
 import com.example.popularmovies.utils.JsonUtils;
 import com.example.popularmovies.utils.NetworkUtils;
@@ -47,10 +48,9 @@ public class MovieDetailsActivity extends AppCompatActivity
     private static final String GET_REVIEWS = "reviews";
     private static final int REVIEWS_COLUMNS = 3;
 
-    //    private AppDatabase mDb;
-
+    private AppDatabase mDb;
     private Movie mMovie;
-    private boolean mMovieInFavorites = false;
+    private boolean mMovieInFavorites;
     private ArrayList<String> mReviews = new ArrayList<>();
     private ArrayList<String> mTrailers = new ArrayList<>();
     private LinearLayout mFullDetailsLayout;
@@ -74,7 +74,7 @@ public class MovieDetailsActivity extends AppCompatActivity
 
         initViews();
 
-//        mDb = AppDatabase.getInstance(getApplicationContext());
+        mDb = AppDatabase.getInstance(getApplicationContext());
 
         if (savedInstanceState != null &&
                 savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_OBJECT) &&
@@ -107,6 +107,24 @@ public class MovieDetailsActivity extends AppCompatActivity
         }
 
         loadMovieExtraData(GET_RUNTIME);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final Movie movie = mDb.movieDao().loadMovieById(mMovie.getId());
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mMovieInFavorites = (movie != null);
+                        setFavoriteBackground();
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -225,14 +243,31 @@ public class MovieDetailsActivity extends AppCompatActivity
 
     public void onFavoriteButtonClicked(View view) {
         if (mMovieInFavorites) {
-            mFavoriteButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_off));
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    mDb.movieDao().deleteMovie(mMovie);
+                }
+            });
         } else {
-            mFavoriteButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_on));
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    mDb.movieDao().insertMovie(mMovie);
+                }
+            });
         }
-
         mMovieInFavorites = !mMovieInFavorites;
+        setFavoriteBackground();
     }
 
+    private void setFavoriteBackground() {
+        if (mMovieInFavorites) {
+            mFavoriteButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_on));
+        } else {
+            mFavoriteButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), android.R.drawable.btn_star_big_off));
+        }
+    }
 
     @Override
     public void onReviewClicked(String review) {

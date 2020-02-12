@@ -3,6 +3,7 @@ package com.example.popularmovies.database;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -11,6 +12,7 @@ import androidx.room.PrimaryKey;
 public class Movie implements Parcelable {
 
     @PrimaryKey
+    @NonNull
     private String id;
     private String originalTitle;
     private String posterPath;

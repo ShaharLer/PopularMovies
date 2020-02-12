@@ -14,12 +14,15 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import com.example.popularmovies.database.AppDatabase;
 import com.example.popularmovies.database.Movie;
 import com.example.popularmovies.utils.JsonUtils;
 import com.example.popularmovies.utils.NetworkUtils;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,14 +35,14 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     private static final String SAVED_INSTANCE_SORT_CHOICE = "sort choice";
     private static final String SORT_POPULAR = "popular";
     private static final String SORT_TOP_RATED = "top_rated";
-    private static final String SORT_FAVORITES = "favorites";
     private static final int PORTRAIT_MOVIES_COLUMNS = 2;
     private static final int LANDSCAPE_MOVIES_COLUMNS = 4;
 
     private static String spinnerPopular;
     private static String spinnerTopRated;
     private static String spinnerFavorites;
-    private static int sortOptionToInit = 0;
+    private static String spinnerChosenOption;
+    private AppDatabase mDb;
     private MoviesAdapter mMoviesAdapter;
     private ProgressBar mProgressBar;
     private LinearLayout mErrorLayout;
@@ -57,8 +60,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
                 savedInstanceState.containsKey(SAVED_INSTANCE_MOVIES_LIST)) {
 
             hideData();
-            sortOptionToInit = savedInstanceState.getInt(SAVED_INSTANCE_SORT_CHOICE);
-            ArrayList<Movie> movies = savedInstanceState.getParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST);
+            spinnerChosenOption = savedInstanceState.getString(SAVED_INSTANCE_SORT_CHOICE);
+            List<Movie> movies = savedInstanceState.getParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST);
             showData(movies);
             return;
         }
@@ -66,15 +69,26 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         loadMoviesData(SORT_POPULAR);
     }
 
+    // TODO move network calls here
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (spinnerChosenOption.equals(spinnerFavorites)) {
+            retrieveFavoriteMovies();
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt(SAVED_INSTANCE_SORT_CHOICE, mSpinner.getSelectedItemPosition());
-        outState.putParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST, mMoviesAdapter.getMoviesData());
+        outState.putString(SAVED_INSTANCE_SORT_CHOICE, spinnerChosenOption);
+        outState.putParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST, new ArrayList<>(mMoviesAdapter.getMoviesData()));
     }
 
     private void initViews() {
+        mDb = AppDatabase.getInstance(getApplicationContext());
         spinnerPopular = getString(R.string.popular);
+        spinnerChosenOption = spinnerPopular; // default
         spinnerTopRated = getString(R.string.top_rated);
         spinnerFavorites = getString(R.string.favorites);
         mErrorLayout = findViewById(R.id.error_layout);
@@ -100,7 +114,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
-    private void showData(ArrayList<Movie> movies) {
+    private void showData(List<Movie> movies) {
         if (movies != null) {
             mMoviesAdapter.setMoviesData(movies);
             mMoviesRecyclerView.setVisibility(View.VISIBLE);
@@ -126,7 +140,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getBaseContext(),
                 R.array.sort_categories_array, android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mSpinnerAdapter);
-        mSpinner.setSelection(sortOptionToInit, false);
+        mSpinner.setSelection(
+                Arrays.asList(getResources().getStringArray(R.array.sort_categories_array)).indexOf(spinnerChosenOption), false);
         mSpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -135,10 +150,13 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
                         if (category.equals(spinnerPopular)) {
                             loadMoviesData(SORT_POPULAR);
+                            spinnerChosenOption = spinnerPopular;
                         } else if (category.equals(spinnerTopRated)) {
                             loadMoviesData(SORT_TOP_RATED);
+                            spinnerChosenOption = spinnerTopRated;
                         } else if (category.equals(spinnerFavorites)) {
-
+                            retrieveFavoriteMovies();
+                            spinnerChosenOption = spinnerFavorites;
                         } else {
                             showErrorMessage();
                         }
@@ -151,6 +169,21 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         );
 
         return true;
+    }
+
+    private void retrieveFavoriteMovies() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                final List<Movie> favoriteMovies = mDb.movieDao().loadAllMovies();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showData(favoriteMovies);
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -181,10 +214,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         loadMoviesData(mSpinner.getSelectedItem().toString());
     }
 
-    public class FetchMoviesListTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+    public class FetchMoviesListTask extends AsyncTask<String, Void, List<Movie>> {
 
         @Override
-        protected ArrayList<Movie> doInBackground(String... strings) {
+        protected List<Movie> doInBackground(String... strings) {
             if (strings.length == 0) {
                 return null;
             }
@@ -195,7 +228,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
             try {
                 String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
-                ArrayList<Movie> movies = JsonUtils.parseMoviesFromJson(jsonMoviesResponse);
+                List<Movie> movies = JsonUtils.parseMoviesFromJson(jsonMoviesResponse);
                 return movies;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -204,7 +237,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Movie> movies) {
+        protected void onPostExecute(List<Movie> movies) {
             showData(movies);
         }
     }

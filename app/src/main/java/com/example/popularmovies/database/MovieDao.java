@@ -13,14 +13,17 @@ import androidx.room.Update;
 public interface MovieDao {
 
     @Query("SELECT * FROM movie")
-    List<Movie> loadAllTasks();
+    List<Movie> loadAllMovies();
 
     @Insert
-    void insertTask(Movie taskEntry);
+    void insertMovie(Movie movie);
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateTask(Movie taskEntry);
+    void updateMovie(Movie movie);
 
     @Delete
-    void deleteTask(Movie taskEntry);
+    void deleteMovie(Movie movie);
+
+    @Query("SELECT * FROM movie WHERE id = :id")
+    Movie loadMovieById(String id);
 }

@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import com.example.popularmovies.database.Movie;
 import com.example.popularmovies.utils.NetworkUtils;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,7 +25,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private static final String ANDROID_PACKAGE = "android";
 
     private final MoviesAdapterOnClickHandler mClickHandler;
-    private ArrayList<Movie> mMoviesData;
+    private List<Movie> mMoviesData;
     private Context mContext;
     private int imageViewHeight;
 
@@ -96,11 +96,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         return mMoviesData.size();
     }
 
-    ArrayList<Movie> getMoviesData() {
+    List<Movie> getMoviesData() {
         return mMoviesData;
     }
 
-    void setMoviesData(ArrayList<Movie> moviesData) {
+    void setMoviesData(List<Movie> moviesData) {
         mMoviesData = moviesData;
         notifyDataSetChanged();
     }
