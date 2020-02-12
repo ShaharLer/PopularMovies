@@ -83,7 +83,9 @@
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:layout_below="@id/vote_average"
-                        android:background="@drawable/ic_star_border_black_24dp" />
+                        android:background="@android:drawable/btn_star_big_off"
+                        android:onClick="onFavoriteButtonClicked"/>
+
                 </RelativeLayout>
 
             </RelativeLayout>

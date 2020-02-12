@@ -1,10 +1,12 @@
 package com.example.popularmovies.utils;
 
-import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.database.Movie;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class JsonUtils {
 
@@ -19,15 +21,15 @@ public class JsonUtils {
     private static final String KEY_VIDEO_KEY = "key";
     private static final String KEY_REVIEW_CONTENT = "content";
 
-    public static Movie[] parseMoviesFromJson(String json) {
+    public static ArrayList<Movie> parseMoviesFromJson(String json) {
         try {
             JSONObject jsonMoviesResponse = new JSONObject(json);
             JSONArray results = jsonMoviesResponse.getJSONArray(KEY_RESULTS);
 
-            Movie[] movies = new Movie[results.length()];
+            ArrayList<Movie> movies = new ArrayList<>();
             for (int i = 0; i < results.length(); i++) {
                 JSONObject jsonMovieObject = (JSONObject) results.get(i);
-                movies[i] = parseMovie(jsonMovieObject);
+                movies.add(parseMovie(jsonMovieObject));
             }
 
             return movies;
@@ -53,27 +55,25 @@ public class JsonUtils {
         movie.setRuntime(jsonMoviesResponse.getString(KEY_RUNTIME));
     }
 
-    public static void parseMovieVideos(String json, Movie movie) throws JSONException {
+    public static void parseMovieVideosNew(String json, ArrayList<String> trailers) throws JSONException {
         JSONObject jsonMoviesResponse = new JSONObject(json);
         JSONArray results = jsonMoviesResponse.getJSONArray(KEY_RESULTS);
-        String[] videosKeys = new String[results.length()];
+        trailers.clear();
 
         for (int i = 0; i < results.length(); i++) {
             JSONObject jsonMovieObject = (JSONObject) results.get(i);
-            videosKeys[i] = jsonMovieObject.getString(KEY_VIDEO_KEY);
+            trailers.add(jsonMovieObject.getString(KEY_VIDEO_KEY));
         }
-        movie.setVideosKeys(videosKeys);
     }
 
-    public static void parseMovieReviews(String json, Movie movie) throws JSONException {
+    public static void parseMovieReviewsNew(String json, ArrayList<String> reviews) throws JSONException {
         JSONObject jsonMoviesResponse = new JSONObject(json);
         JSONArray results = jsonMoviesResponse.getJSONArray(KEY_RESULTS);
-        String[] reviews = new String[results.length()];
+        reviews.clear();
 
         for (int i = 0; i < results.length(); i++) {
             JSONObject jsonMovieObject = (JSONObject) results.get(i);
-            reviews[i] = jsonMovieObject.getString(KEY_REVIEW_CONTENT);
+            reviews.add(jsonMovieObject.getString(KEY_REVIEW_CONTENT));
         }
-        movie.setReviews(reviews);
     }
 }

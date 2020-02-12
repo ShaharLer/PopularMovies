@@ -90,6 +90,7 @@
                                 android:paddingBottom="@dimen/vote_average_padding_bottom_land"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/vote_average_text_size" />
+
                         </LinearLayout>
 
                         <FrameLayout
@@ -104,7 +105,9 @@
                                 android:layout_marginTop="8dp"
                                 android:layout_marginEnd="12dp"
                                 android:layout_gravity="end"
-                                android:background="@drawable/ic_star_border_black_24dp" />
+                                android:background="@android:drawable/btn_star_big_off"
+                                android:onClick="onFavoriteButtonClicked"/>
+
                         </FrameLayout>
 
                     </LinearLayout>

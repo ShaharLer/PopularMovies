@@ -10,7 +10,7 @@
     <dimen name="details_activity_layout_padding_land">25dp</dimen>
     <dimen name="original_title_size">30sp</dimen>
     <dimen name="details_activity_overview_text_size">16sp</dimen>
-    <dimen name="vote_average_text_size">16sp</dimen>
+    <dimen name="vote_average_text_size">18sp</dimen>
     <dimen name="runtime_padding_bottom">8dp</dimen>
     <dimen name="vote_average_padding_bottom">16dp</dimen>
     <dimen name="release_date_padding_bottom">4dp</dimen>

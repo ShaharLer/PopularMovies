@@ -6,6 +6,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.util.List;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,7 +17,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     private PlayTrailersHandler mPlayTrailerHandler;
     private ShareTrailersHandler mShareTrailerHandler;
-    private String[] mTrailersKeys;
+    private List<String> mTrailersKeys;
 
     public interface PlayTrailersHandler {
         void onPlayViewClicked(String videoKey);
@@ -25,8 +27,8 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         void onShareViewClicked(String videoKey);
     }
 
-    public TrailersAdapter(PlayTrailersHandler playTrailerHandler, ShareTrailersHandler shareTrailersHandler,
-                           String[] trailersKeys) {
+    TrailersAdapter(PlayTrailersHandler playTrailerHandler,
+                    ShareTrailersHandler shareTrailersHandler, List<String> trailersKeys) {
 
         mPlayTrailerHandler = playTrailerHandler;
         mShareTrailerHandler = shareTrailersHandler;
@@ -49,7 +51,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
             @Override
             public void onClick(View view) {
                 if (mPlayTrailerHandler != null) {
-                    mPlayTrailerHandler.onPlayViewClicked(mTrailersKeys[position]);
+                    mPlayTrailerHandler.onPlayViewClicked(mTrailersKeys.get(position));
                 }
             }
         });
@@ -57,7 +59,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
             @Override
             public void onClick(View view) {
                 if (mShareTrailerHandler != null) {
-                    mShareTrailerHandler.onShareViewClicked(mTrailersKeys[position]);
+                    mShareTrailerHandler.onShareViewClicked(mTrailersKeys.get(position));
                 }
             }
         });
@@ -65,7 +67,10 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     @Override
     public int getItemCount() {
-        return mTrailersKeys.length;
+        if (mTrailersKeys == null) {
+            return 0;
+        }
+        return mTrailersKeys.size();
     }
 
     class TrailerViewHolder extends RecyclerView.ViewHolder {

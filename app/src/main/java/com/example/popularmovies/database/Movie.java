@@ -1,11 +1,16 @@
-package com.example.popularmovies.model;
+package com.example.popularmovies.database;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "movie")
 public class Movie implements Parcelable {
 
+    @PrimaryKey
     private String id;
     private String originalTitle;
     private String posterPath;
@@ -13,8 +18,6 @@ public class Movie implements Parcelable {
     private String voteAverage;
     private String releaseDate;
     private String runtime;
-    private String[] videosKeys;
-    private String[] reviews;
 
     public Movie(String id, String originalTitle, String posterPath, String overview,
                  String voteAverage, String releaseDate) {
@@ -27,6 +30,7 @@ public class Movie implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
+    @Ignore
     private Movie(Parcel in) {
         id = in.readString();
         originalTitle = in.readString();
@@ -35,8 +39,6 @@ public class Movie implements Parcelable {
         voteAverage = in.readString();
         releaseDate = in.readString();
         runtime = in.readString();
-        videosKeys = in.createStringArray();
-        reviews = in.createStringArray();
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
@@ -107,22 +109,6 @@ public class Movie implements Parcelable {
         this.runtime = runtime;
     }
 
-    public String[] getVideosKeys() {
-        return videosKeys;
-    }
-
-    public void setVideosKeys(String[] videosKeys) {
-        this.videosKeys = videosKeys;
-    }
-
-    public String[] getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(String[] reviews) {
-        this.reviews = reviews;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -137,7 +123,5 @@ public class Movie implements Parcelable {
         dest.writeString(voteAverage);
         dest.writeString(releaseDate);
         dest.writeString(runtime);
-        dest.writeStringArray(videosKeys);
-        dest.writeStringArray(reviews);
     }
 }

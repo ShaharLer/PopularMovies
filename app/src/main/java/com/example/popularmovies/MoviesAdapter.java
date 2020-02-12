@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.example.popularmovies.model.Movie;
+import com.example.popularmovies.database.Movie;
 import com.example.popularmovies.utils.NetworkUtils;
+
+import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,7 +25,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private static final String ANDROID_PACKAGE = "android";
 
     private final MoviesAdapterOnClickHandler mClickHandler;
-    private Movie[] mMoviesData;
+    private ArrayList<Movie> mMoviesData;
     private Context mContext;
     private int imageViewHeight;
 
@@ -31,7 +33,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         void onClick(Movie chosenMovie);
     }
 
-    public MoviesAdapter(MoviesAdapterOnClickHandler clickHandler, Context context) {
+    MoviesAdapter(MoviesAdapterOnClickHandler clickHandler, Context context) {
         mClickHandler = clickHandler;
         mContext = context;
         imageViewHeight = imageViewHeightToSet();
@@ -47,7 +49,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
-        String moviePosterPath = mMoviesData[position].getPosterPath();
+        String moviePosterPath = mMoviesData.get(position).getPosterPath();
         holder.image.getLayoutParams().height = imageViewHeight;
         NetworkUtils.downloadImageIntoView(moviePosterPath, holder.image);
     }
@@ -88,11 +90,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public int getItemCount() {
-        if (mMoviesData == null) return 0;
-        return mMoviesData.length;
+        if (mMoviesData == null) {
+            return 0;
+        }
+        return mMoviesData.size();
     }
 
-    public void setMoviesData(Movie[] moviesData) {
+    ArrayList<Movie> getMoviesData() {
+        return mMoviesData;
+    }
+
+    void setMoviesData(ArrayList<Movie> moviesData) {
         mMoviesData = moviesData;
         notifyDataSetChanged();
     }
@@ -109,8 +117,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            Movie chosenMovie = mMoviesData[adapterPosition];
+            Movie chosenMovie = mMoviesData.get(getAdapterPosition());
             mClickHandler.onClick(chosenMovie);
         }
     }

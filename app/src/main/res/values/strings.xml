@@ -7,6 +7,7 @@
     <string name="movie_image_description">The poster image of the movie</string>
     <string name="popular">Most popular</string>
     <string name="top_rated">Top rated</string>
+    <string name="favorites">Favorites</string>
     <string name="vote_average_suffix">/10</string>
     <string name="runtime_suffix">min</string>
     <string name="detail_error_message">Sandwich data not available</string>
@@ -24,5 +25,6 @@
     <string-array name="sort_categories_array">
         <item>@string/popular</item>
         <item>@string/top_rated</item>
+        <item>@string/favorites</item>
     </string-array>
 </resources>
