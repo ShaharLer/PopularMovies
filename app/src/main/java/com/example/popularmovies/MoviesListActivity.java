@@ -26,6 +26,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +44,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     private static String spinnerTopRated;
     private static String spinnerFavorites;
     private static String spinnerChosenOption;
+
     private AppDatabase mDb;
     private MoviesAdapter mMoviesAdapter;
     private ProgressBar mProgressBar;
@@ -70,13 +73,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     }
 
     // TODO move network calls here
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (spinnerChosenOption.equals(spinnerFavorites)) {
-            retrieveFavoriteMovies();
-        }
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//    }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
@@ -172,16 +172,13 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     }
 
     private void retrieveFavoriteMovies() {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+        final LiveData<List<Movie>> favoriteMovies = mDb.movieDao().loadAllMovies();
+        favoriteMovies.observe(this, new Observer<List<Movie>>() {
             @Override
-            public void run() {
-                final List<Movie> favoriteMovies = mDb.movieDao().loadAllMovies();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        showData(favoriteMovies);
-                    }
-                });
+            public void onChanged(List<Movie> movies) {
+                if (spinnerChosenOption.equals(spinnerFavorites)) {
+                    showData(movies);
+                }
             }
         });
     }

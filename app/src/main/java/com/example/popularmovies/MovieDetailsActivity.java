@@ -28,6 +28,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -107,24 +109,6 @@ public class MovieDetailsActivity extends AppCompatActivity
         }
 
         loadMovieExtraData(GET_RUNTIME);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                final Movie movie = mDb.movieDao().loadMovieById(mMovie.getId());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mMovieInFavorites = (movie != null);
-                        setFavoriteBackground();
-                    }
-                });
-            }
-        });
     }
 
     @Override
@@ -239,6 +223,15 @@ public class MovieDetailsActivity extends AppCompatActivity
         } else {
             mReviewsLayout.setVisibility(View.GONE);
         }
+
+        final LiveData<Movie> chosenMovie = mDb.movieDao().loadMovieById(mMovie.getId());
+        chosenMovie.observe(this, new Observer<Movie>() {
+            @Override
+            public void onChanged(Movie movie) {
+                mMovieInFavorites = (movie != null);
+                setFavoriteBackground();
+            }
+        });
     }
 
     public void onFavoriteButtonClicked(View view) {
@@ -257,8 +250,6 @@ public class MovieDetailsActivity extends AppCompatActivity
                 }
             });
         }
-        mMovieInFavorites = !mMovieInFavorites;
-        setFavoriteBackground();
     }
 
     private void setFavoriteBackground() {

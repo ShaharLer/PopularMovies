@@ -2,6 +2,7 @@ package com.example.popularmovies.database;
 
 import java.util.List;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -13,7 +14,7 @@ import androidx.room.Update;
 public interface MovieDao {
 
     @Query("SELECT * FROM movie")
-    List<Movie> loadAllMovies();
+    LiveData<List<Movie>> loadAllMovies();
 
     @Insert
     void insertMovie(Movie movie);
@@ -25,5 +26,5 @@ public interface MovieDao {
     void deleteMovie(Movie movie);
 
     @Query("SELECT * FROM movie WHERE id = :id")
-    Movie loadMovieById(String id);
+    LiveData<Movie> loadMovieById(String id);
 }
