@@ -109,7 +109,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
     private void hideData() {
         mMoviesRecyclerView.setVisibility(View.INVISIBLE);
-        mMoviesRecyclerView.smoothScrollToPosition(0);
         mErrorLayout.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
@@ -117,6 +116,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     private void showData(List<Movie> movies) {
         if (movies != null) {
             mMoviesAdapter.setMoviesData(movies);
+            mMoviesRecyclerView.smoothScrollToPosition(0);
             mMoviesRecyclerView.setVisibility(View.VISIBLE);
         } else {
             showErrorMessage();
