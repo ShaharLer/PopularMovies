@@ -28,8 +28,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ShareCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -224,8 +224,10 @@ public class MovieDetailsActivity extends AppCompatActivity
             mReviewsLayout.setVisibility(View.GONE);
         }
 
-        final LiveData<Movie> chosenMovie = mDb.movieDao().loadMovieById(mMovie.getId());
-        chosenMovie.observe(this, new Observer<Movie>() {
+        MovieDetailsViewModelFactory factory = new MovieDetailsViewModelFactory(mDb, mMovie.getId());
+        final MovieDetailsViewModel viewModel
+                = ViewModelProviders.of(this, factory).get(MovieDetailsViewModel.class);
+        viewModel.getMovie().observe(this, new Observer<Movie>() {
             @Override
             public void onChanged(Movie movie) {
                 mMovieInFavorites = (movie != null);

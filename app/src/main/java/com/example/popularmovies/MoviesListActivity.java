@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
-import com.example.popularmovies.database.AppDatabase;
 import com.example.popularmovies.database.Movie;
 import com.example.popularmovies.utils.JsonUtils;
 import com.example.popularmovies.utils.NetworkUtils;
@@ -26,8 +25,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -45,7 +44,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     private static String spinnerFavorites;
     private static String spinnerChosenOption;
 
-    private AppDatabase mDb;
     private MoviesAdapter mMoviesAdapter;
     private ProgressBar mProgressBar;
     private LinearLayout mErrorLayout;
@@ -86,7 +84,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     }
 
     private void initViews() {
-        mDb = AppDatabase.getInstance(getApplicationContext());
         spinnerPopular = getString(R.string.popular);
         spinnerChosenOption = spinnerPopular; // default
         spinnerTopRated = getString(R.string.top_rated);
@@ -155,7 +152,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
                             loadMoviesData(SORT_TOP_RATED);
                             spinnerChosenOption = spinnerTopRated;
                         } else if (category.equals(spinnerFavorites)) {
-                            retrieveFavoriteMovies();
+                            setupViewModel();
                             spinnerChosenOption = spinnerFavorites;
                         } else {
                             showErrorMessage();
@@ -171,14 +168,12 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         return true;
     }
 
-    private void retrieveFavoriteMovies() {
-        final LiveData<List<Movie>> favoriteMovies = mDb.movieDao().loadAllMovies();
-        favoriteMovies.observe(this, new Observer<List<Movie>>() {
+    private void setupViewModel() {
+        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {
-                if (spinnerChosenOption.equals(spinnerFavorites)) {
-                    showData(movies);
-                }
+                showData(movies);
             }
         });
     }
