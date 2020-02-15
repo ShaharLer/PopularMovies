@@ -2,6 +2,7 @@ package com.example.popularmovies;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -48,7 +49,8 @@ public class MovieDetailsActivity extends AppCompatActivity
     private static final String GET_RUNTIME = "runtime";
     private static final String GET_TRAILERS = "trailers";
     private static final String GET_REVIEWS = "reviews";
-    private static final int REVIEWS_COLUMNS = 3;
+    private static final int REVIEWS_COLUMNS_PORTRAIT = 3;
+    private static final int REVIEWS_COLUMNS_LANDSCAPE = 5;
 
     private AppDatabase mDb;
     private Movie mMovie;
@@ -218,7 +220,11 @@ public class MovieDetailsActivity extends AppCompatActivity
 
         if (mReviews != null && mReviews.size() != 0) {
             mReviewsRecyclerView.setHasFixedSize(true);
-            mReviewsRecyclerView.setLayoutManager(new GridLayoutManager(this, REVIEWS_COLUMNS));
+            int gridColumnsNumber = REVIEWS_COLUMNS_PORTRAIT; // default
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                gridColumnsNumber = REVIEWS_COLUMNS_LANDSCAPE;
+            }
+            mReviewsRecyclerView.setLayoutManager(new GridLayoutManager(this, gridColumnsNumber));
             mReviewsRecyclerView.setAdapter(new ReviewsAdapter(this, mReviews));
         } else {
             mReviewsLayout.setVisibility(View.GONE);
