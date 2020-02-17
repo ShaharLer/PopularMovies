@@ -1,7 +1,6 @@
 package com.example.popularmovies.utils;
 
 import android.net.Uri;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.example.popularmovies.R;
@@ -16,44 +15,7 @@ import java.util.Scanner;
 
 public final class NetworkUtils {
 
-    private static final String TAG = NetworkUtils.class.getSimpleName();
-    private static final String MOVIES_SORT_BASE_URL = "https://api.themoviedb.org/3/movie/";
-    private static final String MOVIE_TRAILERS_URL_SUFFIX = "/videos";
-    private static final String MOVIE_REVIEWS_URL_SUFFIX = "/reviews";
     private static final String API_KEY_PARAM = "api_key";
-
-    /**
-     * This method calls buildUrl to get a URL that will be used to query a list of movies from themoviedb.org .
-     *
-     * @param parameter The parameter that will be given to decide MOVIES GET command.
-     * @param apiKey The api key to work with the themoviedb.org API.
-     * @return A URL to query a sorted list of movies by category from themoviedb.org .
-     */
-    public static URL buildParameterizedUrl(String parameter, String apiKey) {
-        return buildUrl(MOVIES_SORT_BASE_URL + parameter, apiKey);
-    }
-
-    /**
-     * This method calls buildUrl to get a URL that will be used to query movie's videos from themoviedb.org .
-     *
-     * @param id The movie id.
-     * @param apiKey The api key to work with the themoviedb.org API.
-     * @return A URL to query a the trailers of movies by category from themoviedb.org .
-     */
-    public static URL buildVideosUrl(String id, String apiKey) {
-        return buildUrl(MOVIES_SORT_BASE_URL + id + MOVIE_TRAILERS_URL_SUFFIX, apiKey);
-    }
-
-    /**
-     * This method calls buildUrl to get a URL that will be used to query movie's reviews from themoviedb.org .
-     *
-     * @param id The movie id.
-     * @param apiKey The api key to work with the themoviedb.org API.
-     * @return
-     */
-    public static URL buildReviewsUrl(String id, String apiKey) {
-        return buildUrl(MOVIES_SORT_BASE_URL + id + MOVIE_REVIEWS_URL_SUFFIX, apiKey);
-    }
 
     /**
      * This method builds a URL that will be used to query from themoviedb.org .
@@ -62,7 +24,7 @@ public final class NetworkUtils {
      * @param apiKey The api key to work with the themoviedb.org API.
      * @return A URL to query from themoviedb.org .
      */
-    private static URL buildUrl(String uriPrefix, String apiKey) {
+    public static URL buildUrl(String uriPrefix, String apiKey) {
         Uri uri = Uri.parse(uriPrefix).buildUpon()
                 .appendQueryParameter(API_KEY_PARAM, apiKey)
                 .build();

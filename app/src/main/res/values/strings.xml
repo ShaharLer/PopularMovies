@@ -10,7 +10,7 @@
     <string name="favorites">Favorites</string>
     <string name="vote_average_suffix">/10</string>
     <string name="runtime_suffix">min</string>
-    <string name="detail_error_message">Sandwich data not available</string>
+    <string name="detail_error_message">Movie data not available</string>
     <string name="error_message">An error has occurred.\n\nPlease try again by clicking the REFRESH button below</string>
     <string name="refresh_button_text">REFRESH</string>
     <string name="spinner_title">Sort by</string>
@@ -21,6 +21,7 @@
     <string name="share_trailer_description">Image to click in order to share the trailer</string>
     <string name="review_dialog_back_button">back</string>
     <string name="open_review_description">Image to click in order to read a review</string>
+    <string name="movies_query_base_url">https://api.themoviedb.org/3/movie/</string>
 
     <string-array name="sort_categories_array">
         <item>@string/popular</item>

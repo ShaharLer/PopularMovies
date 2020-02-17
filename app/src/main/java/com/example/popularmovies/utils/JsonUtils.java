@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class JsonUtils {
 
@@ -18,25 +19,18 @@ public class JsonUtils {
     private static final String KEY_VOTE_AVERAGE = "vote_average";
     private static final String KEY_RELEASE_DATE = "release_date";
     private static final String KEY_RUNTIME = "runtime";
-    private static final String KEY_VIDEO_KEY = "key";
-    private static final String KEY_REVIEW_CONTENT = "content";
 
-    public static ArrayList<Movie> parseMoviesFromJson(String json) {
-        try {
-            JSONObject jsonMoviesResponse = new JSONObject(json);
-            JSONArray results = jsonMoviesResponse.getJSONArray(KEY_RESULTS);
+    public static List<Movie> parseMoviesFromJson(String json) throws JSONException {
+        JSONObject jsonMoviesResponse = new JSONObject(json);
+        JSONArray results = jsonMoviesResponse.getJSONArray(KEY_RESULTS);
 
-            ArrayList<Movie> movies = new ArrayList<>();
-            for (int i = 0; i < results.length(); i++) {
-                JSONObject jsonMovieObject = (JSONObject) results.get(i);
-                movies.add(parseMovie(jsonMovieObject));
-            }
-
-            return movies;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
+        List<Movie> movies = new ArrayList<>();
+        for (int i = 0; i < results.length(); i++) {
+            JSONObject jsonMovieObject = (JSONObject) results.get(i);
+            movies.add(parseMovie(jsonMovieObject));
         }
+
+        return movies;
     }
 
     private static Movie parseMovie(JSONObject jsonMovieObject) throws JSONException {
@@ -46,7 +40,6 @@ public class JsonUtils {
         String overview = jsonMovieObject.getString(KEY_OVERVIEW);
         String voteAverage = jsonMovieObject.getString(KEY_VOTE_AVERAGE);
         String releaseDate = jsonMovieObject.getString(KEY_RELEASE_DATE);
-
         return new Movie(id, originalTitle, posterPath, overview, voteAverage, releaseDate);
     }
 
@@ -55,25 +48,16 @@ public class JsonUtils {
         movie.setRuntime(jsonMoviesResponse.getString(KEY_RUNTIME));
     }
 
-    public static void parseMovieVideosNew(String json, ArrayList<String> trailers) throws JSONException {
+    public static List<String> parseResponseToList(String json, String key) throws JSONException {
         JSONObject jsonMoviesResponse = new JSONObject(json);
         JSONArray results = jsonMoviesResponse.getJSONArray(KEY_RESULTS);
-        trailers.clear();
+        List<String> listToFill = new ArrayList<>();
 
         for (int i = 0; i < results.length(); i++) {
             JSONObject jsonMovieObject = (JSONObject) results.get(i);
-            trailers.add(jsonMovieObject.getString(KEY_VIDEO_KEY));
+            listToFill.add(jsonMovieObject.getString(key));
         }
-    }
 
-    public static void parseMovieReviewsNew(String json, ArrayList<String> reviews) throws JSONException {
-        JSONObject jsonMoviesResponse = new JSONObject(json);
-        JSONArray results = jsonMoviesResponse.getJSONArray(KEY_RESULTS);
-        reviews.clear();
-
-        for (int i = 0; i < results.length(); i++) {
-            JSONObject jsonMovieObject = (JSONObject) results.get(i);
-            reviews.add(jsonMovieObject.getString(KEY_REVIEW_CONTENT));
-        }
+        return listToFill;
     }
 }

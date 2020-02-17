@@ -30,7 +30,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private int imageViewHeight;
 
     public interface MoviesAdapterOnClickHandler {
-        void onClick(Movie chosenMovie);
+        void OnMovieClicked(Movie chosenMovie);
     }
 
     MoviesAdapter(MoviesAdapterOnClickHandler clickHandler, Context context) {
@@ -118,7 +118,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         @Override
         public void onClick(View v) {
             Movie chosenMovie = mMoviesData.get(getAdapterPosition());
-            mClickHandler.onClick(chosenMovie);
+            mClickHandler.OnMovieClicked(chosenMovie);
         }
     }
 }

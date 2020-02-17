@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,15 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewViewHolder> {
 
     private ReviewsAdapterOnClickHandler mClickHandler;
-    private ArrayList<String> mReviews;
+    private List<String> mReviewsData;
 
     public interface ReviewsAdapterOnClickHandler {
         void onReviewClicked(String review);
     }
 
-    ReviewsAdapter(ReviewsAdapterOnClickHandler clickHandler, ArrayList<String> reviews) {
+    ReviewsAdapter(ReviewsAdapterOnClickHandler clickHandler) {
         mClickHandler = clickHandler;
-        mReviews = reviews;
     }
 
     @NonNull
@@ -38,10 +37,15 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
 
     @Override
     public int getItemCount() {
-        if (mReviews == null) {
+        if (mReviewsData == null) {
             return 0;
         }
-        return mReviews.size();
+        return mReviewsData.size();
+    }
+
+    void setReviewsData(List<String> reviewsData) {
+        mReviewsData = reviewsData;
+        notifyDataSetChanged();
     }
 
     class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -56,7 +60,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
 
         @Override
         public void onClick(View v) {
-            String chosenReview = mReviews.get(getAdapterPosition());
+            String chosenReview = mReviewsData.get(getAdapterPosition());
             mClickHandler.onReviewClicked(chosenReview);
         }
     }

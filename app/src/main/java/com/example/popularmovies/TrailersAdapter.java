@@ -17,7 +17,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     private PlayTrailersHandler mPlayTrailerHandler;
     private ShareTrailersHandler mShareTrailerHandler;
-    private List<String> mTrailersKeys;
+    private List<String> mTrailersData;
 
     public interface PlayTrailersHandler {
         void onPlayViewClicked(String videoKey);
@@ -27,12 +27,9 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         void onShareViewClicked(String videoKey);
     }
 
-    TrailersAdapter(PlayTrailersHandler playTrailerHandler,
-                    ShareTrailersHandler shareTrailersHandler, List<String> trailersKeys) {
-
+    TrailersAdapter(PlayTrailersHandler playTrailerHandler, ShareTrailersHandler shareTrailersHandler) {
         mPlayTrailerHandler = playTrailerHandler;
         mShareTrailerHandler = shareTrailersHandler;
-        mTrailersKeys = trailersKeys;
     }
 
     @NonNull
@@ -51,7 +48,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
             @Override
             public void onClick(View view) {
                 if (mPlayTrailerHandler != null) {
-                    mPlayTrailerHandler.onPlayViewClicked(mTrailersKeys.get(position));
+                    mPlayTrailerHandler.onPlayViewClicked(mTrailersData.get(position));
                 }
             }
         });
@@ -59,7 +56,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
             @Override
             public void onClick(View view) {
                 if (mShareTrailerHandler != null) {
-                    mShareTrailerHandler.onShareViewClicked(mTrailersKeys.get(position));
+                    mShareTrailerHandler.onShareViewClicked(mTrailersData.get(position));
                 }
             }
         });
@@ -67,10 +64,15 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     @Override
     public int getItemCount() {
-        if (mTrailersKeys == null) {
+        if (mTrailersData == null) {
             return 0;
         }
-        return mTrailersKeys.size();
+        return mTrailersData.size();
+    }
+
+    void setTrailersData(List<String> trailersData) {
+        mTrailersData = trailersData;
+        notifyDataSetChanged();
     }
 
     class TrailerViewHolder extends RecyclerView.ViewHolder {
