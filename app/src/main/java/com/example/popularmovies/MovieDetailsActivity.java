@@ -8,11 +8,16 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +65,9 @@ public class MovieDetailsActivity extends AppCompatActivity
     private static final int REVIEWS_COLUMNS_PORTRAIT = 3;
     private static final int REVIEWS_COLUMNS_LANDSCAPE = 5;
     private static final int MOVIES_DETAILS_LOADER_ID = 8;
+    private static final int DEFAULT_SPINNER_POSITION = -1;
     private boolean mMovieInFavorites, mFinishedLoading = false;
+    private int mSpinnerChosenPosition = DEFAULT_SPINNER_POSITION;
     private AppDatabase mDb;
     private Movie mMovie;
     private List<String> mTrailers, mReviews;
@@ -109,6 +116,11 @@ public class MovieDetailsActivity extends AppCompatActivity
         if (mMovie == null) {
             closeOnError();
             return;
+        }
+
+        if (intent.hasExtra(getString(R.string.intent_spinner_position))) {
+            mSpinnerChosenPosition = intent.getIntExtra(getString(R.string.intent_spinner_position),
+                    DEFAULT_SPINNER_POSITION);
         }
 
         loadMovieExtraData();
@@ -241,6 +253,9 @@ public class MovieDetailsActivity extends AppCompatActivity
         mProgressBar.setVisibility(View.GONE);
         populateUI();
         mFullDetailsLayout.setVisibility(View.VISIBLE);
+        if (mSpinnerChosenPosition == DEFAULT_SPINNER_POSITION) {
+            Toast.makeText(this, R.string.spinner_error_message, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void populateUI() {
@@ -378,5 +393,38 @@ public class MovieDetailsActivity extends AppCompatActivity
                 });
 
         builder.create().show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_layout, menu);
+        Spinner mSpinner = (Spinner) menu.findItem(R.id.spinner).getActionView();
+        SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getBaseContext(),
+                R.array.movie_categories_array, android.R.layout.simple_spinner_dropdown_item);
+        mSpinner.setAdapter(mSpinnerAdapter);
+        mSpinner.setSelection(mSpinnerChosenPosition, false);
+        mSpinner.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        String category = (String) parent.getItemAtPosition(position);
+                        if (category.equals(getString(R.string.popular))
+                                || category.equals(getString(R.string.top_rated))
+                                || category.equals(getString(R.string.favorites))) {
+
+                            mSpinnerChosenPosition = position;
+                            MoviesListActivity.setUserCategoryChoice(category);
+                        } else {
+                            mSpinnerChosenPosition = DEFAULT_SPINNER_POSITION;
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+                    }
+                }
+        );
+
+        return true;
     }
 }

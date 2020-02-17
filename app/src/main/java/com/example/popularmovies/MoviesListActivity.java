@@ -34,7 +34,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class MoviesListActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler,
-        LoaderManager.LoaderCallbacks<List<Movie>>{
+        LoaderManager.LoaderCallbacks<List<Movie>> {
 
     private static final String SAVED_INSTANCE_SORT_CHOICE = "sort choice";
     private static final String SAVED_INSTANCE_MOVIES_LIST = "movies list";
@@ -45,10 +45,12 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     private static final int PORTRAIT_MOVIES_COLUMNS = 2;
     private static final int LANDSCAPE_MOVIES_COLUMNS = 4;
     private static final int MOVIES_SEARCH_LOADER_ID = 24;
-    private static String spinnerPopular, spinnerTopRated, spinnerFavorites, spinnerChosenOption;
+    private static String mUserCategoryChoice;
+    private static List<String> mMovieCategoriesList;
     private int mAdapterFirstVisiblePosition = 0;
     private int moviesColumns = PORTRAIT_MOVIES_COLUMNS; // default
     private boolean mFinishedLoading = false;
+    private Spinner mSpinner;
     private MoviesAdapter mMoviesAdapter;
     private ProgressBar mProgressBar;
     private LinearLayout mErrorLayout;
@@ -64,7 +66,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         initAttributes();
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_INSTANCE_SORT_CHOICE)) {
-            spinnerChosenOption = savedInstanceState.getString(SAVED_INSTANCE_SORT_CHOICE);
+            mUserCategoryChoice = savedInstanceState.getString(SAVED_INSTANCE_SORT_CHOICE);
 
             Log.d("TEST", "savedInstanceState != null");
             if (savedInstanceState.containsKey(SAVED_INSTANCE_MOVIES_LIST)) {
@@ -73,7 +75,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
                     int firstVisibleItemPosition = savedInstanceState.getInt(SAVED_INSTANCE_FIRST_VISIBLE_POSITION);
                     mAdapterFirstVisiblePosition = (firstVisibleItemPosition / moviesColumns) * moviesColumns;
                 }
-                if (spinnerChosenOption.equals(spinnerFavorites)) {
+                if (mUserCategoryChoice.equals(getString(R.string.favorites))) {
                     setupViewModel();
                 } else {
                     List<Movie> movies = savedInstanceState.getParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST);
@@ -90,10 +92,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             moviesColumns = LANDSCAPE_MOVIES_COLUMNS;
         }
-        spinnerPopular = getString(R.string.popular);
-        spinnerChosenOption = spinnerPopular; // default
-        spinnerTopRated = getString(R.string.top_rated);
-        spinnerFavorites = getString(R.string.favorites);
+        mUserCategoryChoice = getString(R.string.popular); // default
+        mMovieCategoriesList = Arrays.asList(getResources().getStringArray(R.array.movie_categories_array));
         mErrorLayout = findViewById(R.id.error_layout);
         mProgressBar = findViewById(R.id.pb_loading_indicator);
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
@@ -108,13 +108,11 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_layout, menu);
-        Spinner mSpinner = (Spinner) menu.findItem(R.id.spinner).getActionView();
+        mSpinner = (Spinner) menu.findItem(R.id.spinner).getActionView();
         SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getBaseContext(),
-                R.array.sort_categories_array, android.R.layout.simple_spinner_dropdown_item);
+                R.array.movie_categories_array, android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mSpinnerAdapter);
-        mSpinner.setSelection(
-                Arrays.asList(getResources().getStringArray(R.array.sort_categories_array))
-                        .indexOf(spinnerChosenOption), false);
+        setSpinnerChoice(false);
         mSpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
@@ -122,12 +120,12 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
                         mFinishedLoading = false;
 
                         String category = (String) parent.getItemAtPosition(position);
-                        if (category.equals(spinnerPopular)) {
-                            spinnerChosenOption = spinnerPopular;
-                        } else if (category.equals(spinnerTopRated)) {
-                            spinnerChosenOption = spinnerTopRated;
-                        } else if (category.equals(spinnerFavorites)) {
-                            spinnerChosenOption = spinnerFavorites;
+                        if (category.equals(getString(R.string.popular))) {
+                            mUserCategoryChoice = getString(R.string.popular);
+                        } else if (category.equals(getString(R.string.top_rated))) {
+                            mUserCategoryChoice = getString(R.string.top_rated);
+                        } else if (category.equals(getString(R.string.favorites))) {
+                            mUserCategoryChoice = getString(R.string.favorites);
                         } else {
                             showErrorMessage();
                             return;
@@ -145,16 +143,28 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         return true;
     }
 
+    private String getSpinnerCurrentChoice() {
+        return mMovieCategoriesList.get(mSpinner.getSelectedItemPosition());
+    }
+
+    private void setSpinnerChoice(boolean animate) {
+        mSpinner.setSelection(mMovieCategoriesList.indexOf(mUserCategoryChoice), animate);
+    }
+
+    public static void setUserCategoryChoice(String spinnerChoice) {
+        mUserCategoryChoice = spinnerChoice;
+    }
+
     /**
      * This method will execute the method to fetch the movies list according to the given category.
      */
     private void loadMoviesData() {
-        if (spinnerChosenOption.equals(spinnerFavorites)) {
+        if (mUserCategoryChoice.equals(getString(R.string.favorites))) {
             mAdapterFirstVisiblePosition = 0;
             setupViewModel();
         } else {
             Bundle searchBundle = new Bundle();
-            searchBundle.putString(SEARCH_MOVIES_CATEGORY, spinnerChosenOption);
+            searchBundle.putString(SEARCH_MOVIES_CATEGORY, mUserCategoryChoice);
             LoaderManager loaderManager = getSupportLoaderManager();
             Loader<String> moviesSearchLoader = loaderManager.getLoader(MOVIES_SEARCH_LOADER_ID);
             if (moviesSearchLoader == null) {
@@ -172,7 +182,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
             @Override
             public void onChanged(List<Movie> movies) {
-                if (spinnerChosenOption.equals(spinnerFavorites)) {
+                if (mUserCategoryChoice.equals(getString(R.string.favorites))) {
                     Log.d("TEST", "Inside setupViewModel:onChanged");
                     showData(movies);
                 }
@@ -195,23 +205,36 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
                     return;
                 }
                 if (mMovies != null) {
-                    if (mMovies == mMoviesAdapter.getMoviesData() || spinnerChosenOption.equals(spinnerFavorites)) {
+                    if (!mUserCategoryChoice.equals(getSpinnerCurrentChoice())) {
+                        setSpinnerChoice(true);
+                        return;
+                    }
+
+                    if (mMovies == mMoviesAdapter.getMoviesData() || mUserCategoryChoice.equals(getString(R.string.favorites))) {
+
+                        // TODO remove these if statements
                         if (mMovies == mMoviesAdapter.getMoviesData()) {
                             Log.d("TEST", "onStartLoading: mMovies == mMoviesAdapter.getMoviesData()");
                         }
-                        if (spinnerChosenOption.equals(spinnerFavorites)) {
-                            Log.d("TEST", "onStartLoading: spinnerChosenOption.equals(spinnerFavorites)");
+
+                        if (mUserCategoryChoice.equals(getString(R.string.favorites))) {
+                            Log.d("TEST", "onStartLoading: mUserCategoryChoice.equals(getString(R.string.favorites))");
                         }
+
                         return;
                     }
 
                     Log.d("TEST", "onStartLoading: movies != null -> calling deliverResult(movies)");
                     deliverResult(mMovies);
                 } else {
-                    hideData();
-                    Log.d("TEST", "calling forceLoad()");
-                    forceLoad();
+                    callForceLoad();
                 }
+            }
+
+            private void callForceLoad() {
+                hideData();
+                Log.d("TEST", "calling forceLoad()");
+                forceLoad();
             }
 
             @Override
@@ -236,9 +259,9 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
             }
 
             private String mapCategory(String category) {
-                if (category.equals(spinnerPopular)) {
+                if (category.equals(getString(R.string.popular))) {
                     return SORT_POPULAR;
-                } else if (category.equals(spinnerTopRated)) {
+                } else if (category.equals(getString(R.string.top_rated))) {
                     return SORT_TOP_RATED;
                 } else {
                     return category;
@@ -268,12 +291,19 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         loadMoviesData();
     }
 
+    /**
+     * This method will hide the data views and show the progress bar.
+     */
     private void hideData() {
         mMoviesRecyclerView.setVisibility(View.INVISIBLE);
         mErrorLayout.setVisibility(View.GONE);
         mProgressBar.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * This method will show either the movie list or the error message visible and hide the
+     * progress bar.
+     */
     private void showData(List<Movie> movies) {
         if (movies != null) {
             mMoviesAdapter.setMoviesData(movies);
@@ -294,19 +324,24 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         mErrorLayout.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * This method is called when a movie item was clicked in the movies list.
+     */
     @Override
     public void OnMovieClicked(Movie chosenMovie) {
         Context context = this;
         Class destinationClass = MovieDetailsActivity.class;
         Intent intent = new Intent(context, destinationClass);
         intent.putExtra(Intent.EXTRA_TEXT, chosenMovie);
+        int currentSpinnerPosition = mMovieCategoriesList.indexOf(mUserCategoryChoice);
+        intent.putExtra(getString(R.string.intent_spinner_position), currentSpinnerPosition);
         startActivity(intent);
     }
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(SAVED_INSTANCE_SORT_CHOICE, spinnerChosenOption);
+        outState.putString(SAVED_INSTANCE_SORT_CHOICE, mUserCategoryChoice);
         if (mFinishedLoading) {
             outState.putParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST, new ArrayList<>(mMoviesAdapter.getMoviesData()));
             outState.putInt(SAVED_INSTANCE_FIRST_VISIBLE_POSITION, mLayoutManager.findFirstVisibleItemPosition());

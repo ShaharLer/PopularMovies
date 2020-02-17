@@ -11,6 +11,7 @@
     <string name="vote_average_suffix">/10</string>
     <string name="runtime_suffix">min</string>
     <string name="detail_error_message">Movie data not available</string>
+    <string name="spinner_error_message">Movies category not available</string>
     <string name="error_message">An error has occurred.\n\nPlease try again by clicking the REFRESH button below</string>
     <string name="refresh_button_text">REFRESH</string>
     <string name="spinner_title">Sort by</string>
@@ -22,8 +23,9 @@
     <string name="review_dialog_back_button">back</string>
     <string name="open_review_description">Image to click in order to read a review</string>
     <string name="movies_query_base_url">https://api.themoviedb.org/3/movie/</string>
+    <string name="intent_spinner_position">spinner position</string>
 
-    <string-array name="sort_categories_array">
+    <string-array name="movie_categories_array">
         <item>@string/popular</item>
         <item>@string/top_rated</item>
         <item>@string/favorites</item>
