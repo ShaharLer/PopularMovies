@@ -3,6 +3,7 @@ package com.example.popularmovies;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -42,6 +44,7 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.loader.content.Loader;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -65,9 +68,8 @@ public class MovieDetailsActivity extends AppCompatActivity
     private static final int REVIEWS_COLUMNS_PORTRAIT = 3;
     private static final int REVIEWS_COLUMNS_LANDSCAPE = 5;
     private static final int MOVIES_DETAILS_LOADER_ID = 8;
-    private static final int DEFAULT_SPINNER_POSITION = -1;
     private boolean mMovieInFavorites, mFinishedLoading = false;
-    private int mSpinnerChosenPosition = DEFAULT_SPINNER_POSITION;
+    private List<String> mMovieCategoriesList;
     private AppDatabase mDb;
     private Movie mMovie;
     private List<String> mTrailers, mReviews;
@@ -87,16 +89,16 @@ public class MovieDetailsActivity extends AppCompatActivity
 
         initAttributes();
 
-        if (savedInstanceState != null &&
-                savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_OBJECT) &&
-                savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_TRAILERS) &&
-                savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_REVIEWS)) {
-
-            Log.d("TEST (details)", "savedInstanceState != null");
+        if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_OBJECT)) {
+            Log.d("TEST (details)", "savedInstanceState != null & all extra details were loaded");
             hideData();
             mMovie = savedInstanceState.getParcelable(SAVED_INSTANCE_MOVIE_OBJECT);
-            mTrailers = savedInstanceState.getStringArrayList(SAVED_INSTANCE_MOVIE_TRAILERS);
-            mReviews = savedInstanceState.getStringArrayList(SAVED_INSTANCE_MOVIE_REVIEWS);
+            if (savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_TRAILERS)) {
+                mTrailers = savedInstanceState.getStringArrayList(SAVED_INSTANCE_MOVIE_TRAILERS);
+            }
+            if (savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_REVIEWS)) {
+                mReviews = savedInstanceState.getStringArrayList(SAVED_INSTANCE_MOVIE_REVIEWS);
+            }
             showData();
             return;
         }
@@ -118,26 +120,18 @@ public class MovieDetailsActivity extends AppCompatActivity
             return;
         }
 
-        if (intent.hasExtra(getString(R.string.intent_spinner_position))) {
-            mSpinnerChosenPosition = intent.getIntExtra(getString(R.string.intent_spinner_position),
-                    DEFAULT_SPINNER_POSITION);
-        }
-
         loadMovieExtraData();
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (mFinishedLoading) {
-            outState.putParcelable(SAVED_INSTANCE_MOVIE_OBJECT, mMovie);
-            outState.putStringArrayList(SAVED_INSTANCE_MOVIE_TRAILERS, new ArrayList<>(mTrailers));
-            outState.putStringArrayList(SAVED_INSTANCE_MOVIE_REVIEWS, new ArrayList<>(mReviews));
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("TEST (details)", "Inside onDestroy");
     }
 
     private void initAttributes() {
         mDb = AppDatabase.getInstance(getApplicationContext());
+        mMovieCategoriesList = Arrays.asList(getResources().getStringArray(R.array.movie_categories_array));
         mTrailerLayout = findViewById(R.id.trailer_layout);
         mReviewsLayout = findViewById(R.id.reviews_layout);
         mProgressBar = findViewById(R.id.pb_loading_indicator_details_activity);
@@ -176,6 +170,15 @@ public class MovieDetailsActivity extends AppCompatActivity
     private void closeOnError() {
         finish();
         Toast.makeText(this, R.string.detail_error_message, Toast.LENGTH_SHORT).show();
+    }
+
+    private SharedPreferences getAppSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(this);
+    }
+
+    private String getPrefSortCategory() {
+        return getAppSharedPreferences().getString(getString(R.string.pref_sort_category_key),
+                getString(R.string.pref_default_sort_category));
     }
 
     private void loadMovieExtraData() {
@@ -253,9 +256,6 @@ public class MovieDetailsActivity extends AppCompatActivity
         mProgressBar.setVisibility(View.GONE);
         populateUI();
         mFullDetailsLayout.setVisibility(View.VISIBLE);
-        if (mSpinnerChosenPosition == DEFAULT_SPINNER_POSITION) {
-            Toast.makeText(this, R.string.spinner_error_message, Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void populateUI() {
@@ -402,21 +402,15 @@ public class MovieDetailsActivity extends AppCompatActivity
         SpinnerAdapter mSpinnerAdapter = ArrayAdapter.createFromResource(getBaseContext(),
                 R.array.movie_categories_array, android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(mSpinnerAdapter);
-        mSpinner.setSelection(mSpinnerChosenPosition, false);
+        mSpinner.setSelection(mMovieCategoriesList.indexOf(getPrefSortCategory()), true);
         mSpinner.setOnItemSelectedListener(
                 new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        String category = (String) parent.getItemAtPosition(position);
-                        if (category.equals(getString(R.string.popular))
-                                || category.equals(getString(R.string.top_rated))
-                                || category.equals(getString(R.string.favorites))) {
-
-                            mSpinnerChosenPosition = position;
-                            MoviesListActivity.setUserCategoryChoice(category);
-                        } else {
-                            mSpinnerChosenPosition = DEFAULT_SPINNER_POSITION;
-                        }
+                        String chosenCategory = (String) parent.getItemAtPosition(position);
+                        SharedPreferences.Editor editor = getAppSharedPreferences().edit();
+                        editor.putString(getString(R.string.pref_sort_category_key), chosenCategory);
+                        editor.apply();
                     }
 
                     @Override
@@ -427,4 +421,19 @@ public class MovieDetailsActivity extends AppCompatActivity
 
         return true;
     }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mFinishedLoading) {
+            outState.putParcelable(SAVED_INSTANCE_MOVIE_OBJECT, mMovie);
+            if (mTrailers != null) {
+                outState.putStringArrayList(SAVED_INSTANCE_MOVIE_TRAILERS, new ArrayList<>(mTrailers));
+            }
+            if (mReviews != null) {
+                outState.putStringArrayList(SAVED_INSTANCE_MOVIE_REVIEWS, new ArrayList<>(mReviews));
+            }
+        }
+    }
+
 }

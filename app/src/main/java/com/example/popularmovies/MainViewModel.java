@@ -1,6 +1,7 @@
 package com.example.popularmovies;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.example.popularmovies.database.AppDatabase;
 import com.example.popularmovies.database.Movie;
@@ -20,6 +21,7 @@ public class MainViewModel extends AndroidViewModel {
         super(application);
         AppDatabase database = AppDatabase.getInstance(this.getApplication());
         movies = database.movieDao().loadAllMovies();
+        Log.d("TEST", "loaded movies from database");
     }
 
     public LiveData<List<Movie>> getMovies() {

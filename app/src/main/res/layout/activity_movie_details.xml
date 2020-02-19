@@ -80,8 +80,8 @@
 
                     <Button
                         android:id="@+id/mark_as_favorite"
-                        android:layout_width="35dp"
-                        android:layout_height="35dp"
+                        android:layout_width="@dimen/mark_as_favorite_button_size"
+                        android:layout_height="@dimen/mark_as_favorite_button_size"
                         android:layout_below="@id/vote_average"
                         android:background="@android:drawable/btn_star_big_off"
                         android:onClick="onFavoriteButtonClicked"/>

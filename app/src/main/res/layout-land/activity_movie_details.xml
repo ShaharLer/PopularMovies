@@ -35,7 +35,7 @@
                 android:layout_marginStart="@dimen/details_activity_padding_horizontal"
                 android:layout_marginEnd="@dimen/details_activity_padding_horizontal"
                 android:orientation="horizontal"
-                android:paddingTop="5dp">
+                android:paddingTop="@dimen/details_layout_padding_top_land">
 
                 <ImageView
                     android:id="@+id/movie_details_image"
@@ -100,10 +100,10 @@
 
                             <Button
                                 android:id="@+id/mark_as_favorite"
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
-                                android:layout_marginTop="8dp"
-                                android:layout_marginEnd="12dp"
+                                android:layout_width="@dimen/mark_as_favorite_button_size_land"
+                                android:layout_height="@dimen/mark_as_favorite_button_size_land"
+                                android:layout_marginTop="@dimen/mark_as_favorite_margin_top_land"
+                                android:layout_marginEnd="@dimen/mark_as_favorite_margin_end_land"
                                 android:layout_gravity="end"
                                 android:background="@android:drawable/btn_star_big_off"
                                 android:onClick="onFavoriteButtonClicked"/>

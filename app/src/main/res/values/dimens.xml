@@ -41,4 +41,21 @@
     <dimen name="divider_height">1dp</dimen>
     <dimen name="trailers_title_size">20sp</dimen>
     <dimen name="reviews_title_size">20sp</dimen>
+    <dimen name="details_layout_padding_top_land">5dp</dimen>
+    <dimen name="mark_as_favorite_button_size">35dp</dimen>
+    <dimen name="mark_as_favorite_button_size_land">40dp</dimen>
+    <dimen name="mark_as_favorite_margin_top_land">8dp</dimen>
+    <dimen name="mark_as_favorite_margin_end_land">12dp</dimen>
+    <dimen name="review_dialog_padding">18dp</dimen>
+    <dimen name="review_dialog_text_size">20sp</dimen>
+    <dimen name="review_item_width">40dp</dimen>
+    <dimen name="review_item_height">50dp</dimen>
+    <dimen name="review_item_margin">30dp</dimen>
+    <dimen name="play_trailer_item_size">45dp</dimen>
+    <dimen name="play_trailer_item_margin_end">20dp</dimen>
+    <dimen name="share_trailer_item_size">30dp</dimen>
+    <dimen name="share_trailer_item_margin_top">7dp</dimen>
+    <dimen name="share_trailer_margin_end">30dp</dimen>
+    <dimen name="trailer_number_tv_margin_top">8dp</dimen>
+    <dimen name="trailer_number_tv_text_size">18sp</dimen>
 </resources>

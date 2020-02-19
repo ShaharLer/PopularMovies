@@ -5,32 +5,30 @@
     android:layout_margin="13dp"
     android:orientation="horizontal">
 
-    <!-- TODO extract to strings.xml and dimens.xml -->
-
     <ImageButton
         android:id="@+id/play_trailer"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginEnd="20dp"
+        android:layout_width="@dimen/play_trailer_item_size"
+        android:layout_height="@dimen/play_trailer_item_size"
+        android:layout_marginEnd="@dimen/play_trailer_item_margin_end"
         android:background="@drawable/ic_play_arrow_black_24dp"
         android:src="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/play_trailer_description" />
 
     <ImageButton
         android:id="@+id/share_trailer"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="7dp"
-        android:layout_marginEnd="30dp"
+        android:layout_width="@dimen/share_trailer_item_size"
+        android:layout_height="@dimen/share_trailer_item_size"
+        android:layout_marginTop="@dimen/share_trailer_item_margin_top"
+        android:layout_marginEnd="@dimen/share_trailer_margin_end"
         android:background="@drawable/ic_share_black_24dp"
         android:src="?android:attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/share_trailer_description" />
 
     <TextView
-        android:id="@+id/trailer_name"
+        android:id="@+id/trailer_number"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:textSize="18sp"/>
+        android:layout_marginTop="@dimen/trailer_number_tv_margin_top"
+        android:textSize="@dimen/trailer_number_tv_text_size"/>
 
 </LinearLayout>

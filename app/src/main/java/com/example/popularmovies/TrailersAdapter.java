@@ -85,7 +85,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
             super(itemView);
             playTrailerIb = itemView.findViewById(R.id.play_trailer);
             shareTrailerIb = itemView.findViewById(R.id.share_trailer);
-            trailerTitleTv = itemView.findViewById(R.id.trailer_name);
+            trailerTitleTv = itemView.findViewById(R.id.trailer_number);
         }
     }
 
