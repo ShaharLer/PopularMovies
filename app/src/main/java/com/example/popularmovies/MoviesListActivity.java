@@ -40,18 +40,17 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
     private static final String SAVED_INSTANCE_CHOSEN_CATEGORY = "chosen category";
     private static final String SAVED_INSTANCE_MOVIES_LIST = "movies list";
-//    private static final String SAVED_INSTANCE_FIRST_VISIBLE_POSITION = "first visible position";
+    private static final String SAVED_INSTANCE_FIRST_VISIBLE_POSITION = "first visible position";
     private static final String SORT_POPULAR = "popular";
     private static final String SORT_TOP_RATED = "top_rated";
-    private static final String SEARCH_MOVIES_CATEGORY = "category";
     private static final int PORTRAIT_MOVIES_COLUMNS = 2;
     private static final int LANDSCAPE_MOVIES_COLUMNS = 4;
     private static final int MOVIES_SEARCH_LOADER_ID = 24;
-//    private int mAdapterFirstVisiblePosition = 0;
-    private int moviesColumns = PORTRAIT_MOVIES_COLUMNS; // default
-    private boolean mFinishedLoading = false;
-    private boolean mSpinnerChoiceTrigger = false;
+    private boolean mFinishedLoading;
+    private boolean mSpinnerChoiceTrigger;
     private String mUserCategoryChoice;
+    private int mAdapterFirstVisiblePosition;
+    private int moviesColumns;
     private List<Movie> mMovies;
     private Spinner mSpinner;
     private MoviesAdapter mMoviesAdapter;
@@ -59,6 +58,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     private LinearLayout mErrorLayout;
     private GridLayoutManager mLayoutManager;
     private RecyclerView mMoviesRecyclerView;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,39 +69,33 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         initAttributes();
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(SAVED_INSTANCE_CHOSEN_CATEGORY)
-//                && savedInstanceState.containsKey(SAVED_INSTANCE_FIRST_VISIBLE_POSITION)
                 && savedInstanceState.containsKey(SAVED_INSTANCE_MOVIES_LIST)) {
 
             Log.d("TEST", "savedInstanceState != null");
-
             mUserCategoryChoice = savedInstanceState.getString(SAVED_INSTANCE_CHOSEN_CATEGORY);
-//            int firstVisibleItemPosition = savedInstanceState.getInt(SAVED_INSTANCE_FIRST_VISIBLE_POSITION);
-//            mAdapterFirstVisiblePosition = (firstVisibleItemPosition / moviesColumns) * moviesColumns;
-
-//            if (getPrefSortCategory().equals(getString(R.string.favorites))) {
-//                hideData();
-//                setupViewModel();
-//                return;
-//            } else {
-//            if (!getPrefSortCategory().equals(getString(R.string.favorites))) {
-                mMovies = savedInstanceState.getParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST);
-//            }
-//            }
+            if (savedInstanceState.containsKey(SAVED_INSTANCE_FIRST_VISIBLE_POSITION)) {
+                int firstVisibleItemPosition = savedInstanceState.getInt(SAVED_INSTANCE_FIRST_VISIBLE_POSITION);
+                mAdapterFirstVisiblePosition = (firstVisibleItemPosition / moviesColumns) * moviesColumns;
+            }
+            mMovies = savedInstanceState.getParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST);
         }
-
 
         loadMoviesData();
     }
 
     private void initAttributes() {
+        // initialize variables
+        mFinishedLoading = false;
+        mSpinnerChoiceTrigger = false;
         mUserCategoryChoice = getPrefSortCategory();
+        mAdapterFirstVisiblePosition = 0;
+        moviesColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ?
+                PORTRAIT_MOVIES_COLUMNS : LANDSCAPE_MOVIES_COLUMNS;
+
+        // initialize views
         mErrorLayout = findViewById(R.id.error_layout);
         mProgressBar = findViewById(R.id.pb_loading_indicator);
         mMoviesRecyclerView = findViewById(R.id.rv_movies);
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            moviesColumns = LANDSCAPE_MOVIES_COLUMNS;
-        }
         mMoviesRecyclerView.setHasFixedSize(true);
         mLayoutManager = new GridLayoutManager(this, moviesColumns);
         mMoviesRecyclerView.setLayoutManager(mLayoutManager);
@@ -174,54 +168,37 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
      * This method will execute the method to fetch the movies list according to the given category.
      */
     private void loadMoviesData() {
-        /*
         hideData();
-        String prefSortCategory = getPrefSortCategory();
-        if (prefSortCategory.equals(getString(R.string.favorites))) {
-
-         */
-//            mAdapterFirstVisiblePosition = 0;
-//            setupViewModel();
-//        } else {
-//            Bundle searchBundle = new Bundle();
-//            searchBundle.putString(SEARCH_MOVIES_CATEGORY, getPrefSortCategory());
-
-            LoaderManager loaderManager = getSupportLoaderManager();
-            Loader<String> moviesSearchLoader = loaderManager.getLoader(MOVIES_SEARCH_LOADER_ID);
-            if (moviesSearchLoader == null) {
-                Log.d("TEST", "Calling initLoader inside: loadMoviesData");
-//                getSupportLoaderManager().initLoader(MOVIES_SEARCH_LOADER_ID, searchBundle, this);
-                getSupportLoaderManager().initLoader(MOVIES_SEARCH_LOADER_ID, null, this);
-            } else {
-                Log.d("TEST", "Calling restartLoader inside: loadMoviesData");
-//                getSupportLoaderManager().restartLoader(MOVIES_SEARCH_LOADER_ID, searchBundle, this);
-                getSupportLoaderManager().restartLoader(MOVIES_SEARCH_LOADER_ID, null, this);
-            }
-//        }
+        LoaderManager loaderManager = getSupportLoaderManager();
+        Loader<String> moviesSearchLoader = loaderManager.getLoader(MOVIES_SEARCH_LOADER_ID);
+        if (moviesSearchLoader == null) {
+            Log.d("TEST", "Calling initLoader inside: loadMoviesData");
+            getSupportLoaderManager().initLoader(MOVIES_SEARCH_LOADER_ID, null, this);
+        } else {
+            Log.d("TEST", "Calling restartLoader inside: loadMoviesData");
+            getSupportLoaderManager().restartLoader(MOVIES_SEARCH_LOADER_ID, null, this);
+        }
     }
 
     private void setupViewModel() {
-        MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
-            @Override
-            public void onChanged(List<Movie> movies) {
-                if (getPrefSortCategory().equals(getString(R.string.favorites))) {
-                    Log.d("TEST", "Inside setupViewModel:onChanged");
-                    mMovies = movies;
-                    showData();
+        hideData();
+        if (viewModel == null) {
+            viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+            viewModel.getMovies().observe(this, new Observer<List<Movie>>() {
+                @Override
+                public void onChanged(List<Movie> movies) {
+                    if (getPrefSortCategory().equals(getString(R.string.favorites))) {
+                        Log.d("TEST", "Inside setupViewModel:onChanged");
+                        mMovies = movies;
+                        showData();
+                    }
                 }
-            }
-        });
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+            });
+        } else {
+            Log.d("TEST", "Inside setupViewModel: viewModel != null");
+            mMovies = viewModel.getMovies().getValue();
+            showData();
+        }
     }
 
     @NonNull
@@ -233,74 +210,35 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
             @Override
             protected void onStartLoading() {
                 String prefSortCategory = getPrefSortCategory();
-
-                if (prefSortCategory.equals(getString(R.string.favorites))) {
-                    // favorites
-
-                    if (mMovies != null) {
-                        if (!prefSortCategory.equals(mUserCategoryChoice)) {
-                            if (mSpinner == null) {
-                                mSpinnerChoiceTrigger = true;
-                            } else {
-                                setSpinnerChoice(false);
-                            }
-                        } else if (!mFinishedLoading) {
-                            hideData();
-                            setupViewModel();
-                        }
-                        return;
-                    }
-
-                    hideData();
-                    setupViewModel();
-                } else {
-                    // Most popular / Top rated
-
-                    if (mMovies != null) {
-                        if (!prefSortCategory.equals(mUserCategoryChoice)) {
-                            if (mSpinner == null) {
-                                mSpinnerChoiceTrigger = true;
-                            } else {
-                                setSpinnerChoice(true);
-                            }
-                        } else if (!mFinishedLoading) {
-                            showData();
-                        }
-                        return;
-                    }
-
-                    hideData();
-                    forceLoad();
-                }
-
-                /*
                 if (mMovies != null) {
                     if (!prefSortCategory.equals(mUserCategoryChoice)) {
-                        mSpinnerChoiceTrigger = true;
-                        if (mSpinner != null) {
+                        if (mSpinner == null) {
+                            mSpinnerChoiceTrigger = true;
+                        } else {
                             setSpinnerChoice(true);
                         }
-                        return;
+                    } else if (!mFinishedLoading) {
+                        if (prefSortCategory.equals(getString(R.string.favorites))) {
+                            setupViewModel();
+                        } else {
+                            showData();
+                        }
+                    } else if (mLayoutManager != null) {
+                        mAdapterFirstVisiblePosition = mLayoutManager.findFirstVisibleItemPosition();
                     }
-
-                    if (mSpinner == null) {
-                        showData();
-                    }
-                } else if (args != null) {
-                    Log.d("TEST", "calling forceLoad()");
-                    forceLoad();
                 } else {
-                    Log.d("TEST", "args == null");
-                    deliverResult(null);
+                    mAdapterFirstVisiblePosition = 0;
+                    if (prefSortCategory.equals(getString(R.string.favorites))) {
+                        setupViewModel();
+                    } else {
+                        forceLoad();
+                    }
                 }
-                */
-
             }
 
             @Override
             public List<Movie> loadInBackground() {
                 Log.d("TEST", "loadInBackground");
-//                String categoryType = args.getString(SEARCH_MOVIES_CATEGORY);
                 String categoryType = getPrefSortCategory();
                 if (categoryType == null || categoryType.isEmpty()) {
                     return null;
@@ -311,8 +249,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
                     String urlPrefix = getResources().getString(R.string.movies_query_base_url) + mapCategory(categoryType);
                     URL moviesRequestUrl = NetworkUtils.buildUrl(urlPrefix, apiKey);
                     String jsonMoviesResponse = NetworkUtils.getResponseFromHttpUrl(moviesRequestUrl);
-                    mMovies = JsonUtils.parseMoviesFromJson(jsonMoviesResponse);
-                    return mMovies;
+                    return JsonUtils.parseMoviesFromJson(jsonMoviesResponse);
                 } catch (Exception e) {
                     e.printStackTrace();
                     return null;
@@ -334,7 +271,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     @Override
     public void onLoadFinished(@NonNull Loader<List<Movie>> loader, List<Movie> data) {
         Log.d("TEST", "onLoadFinished");
-//        mAdapterFirstVisiblePosition = 0;
         mMovies = data;
         showData();
     }
@@ -358,10 +294,10 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
      */
     private void showData() {
         if (mMovies != null) {
-            mFinishedLoading = true;
             mMoviesAdapter.setMoviesData(mMovies);
-            mMoviesRecyclerView.smoothScrollToPosition(0 /*mAdapterFirstVisiblePosition*/);
+            mMoviesRecyclerView.smoothScrollToPosition(mAdapterFirstVisiblePosition);
             mMoviesRecyclerView.setVisibility(View.VISIBLE);
+            mFinishedLoading = true;
         } else {
             showErrorMessage();
         }
@@ -393,8 +329,14 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         super.onSaveInstanceState(outState);
         if (mFinishedLoading) {
             outState.putString(SAVED_INSTANCE_CHOSEN_CATEGORY, getPrefSortCategory());
-//            outState.putInt(SAVED_INSTANCE_FIRST_VISIBLE_POSITION, mLayoutManager.findFirstVisibleItemPosition());
-            outState.putParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST, new ArrayList<>(mMovies));
+
+            if (mLayoutManager != null && mLayoutManager.findFirstVisibleItemPosition() > 0) {
+                outState.putInt(SAVED_INSTANCE_FIRST_VISIBLE_POSITION, mLayoutManager.findFirstVisibleItemPosition());
+            }
+
+            if (mMovies != null) {
+                outState.putParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST, new ArrayList<>(mMovies));
+            }
         }
     }
 }
