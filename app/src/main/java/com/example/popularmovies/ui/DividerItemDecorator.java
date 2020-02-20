@@ -1,4 +1,4 @@
-package com.example.popularmovies;
+package com.example.popularmovies.ui;
 
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;

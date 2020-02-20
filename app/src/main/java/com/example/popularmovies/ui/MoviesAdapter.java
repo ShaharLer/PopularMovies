@@ -1,4 +1,4 @@
-package com.example.popularmovies;
+package com.example.popularmovies.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.popularmovies.R;
 import com.example.popularmovies.database.Movie;
 import com.example.popularmovies.utils.NetworkUtils;
 

@@ -1,7 +1,4 @@
-package com.example.popularmovies;
-
-import com.example.popularmovies.database.AppDatabase;
-import com.example.popularmovies.database.Movie;
+package com.example.popularmovies.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;

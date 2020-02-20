@@ -1,6 +1,4 @@
-package com.example.popularmovies;
-
-import com.example.popularmovies.database.AppDatabase;
+package com.example.popularmovies.database;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;

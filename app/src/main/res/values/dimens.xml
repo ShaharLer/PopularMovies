@@ -32,13 +32,11 @@
     <dimen name="refresh_button_margin_top">20dp</dimen>
     <dimen name="trailers_layout_margin_top">10dp</dimen>
     <dimen name="reviews_layout_margin_top">10dp</dimen>
-    <dimen name="trailers_layout_margin_end">15dp</dimen>
-    <dimen name="reviews_layout_margin_end">15dp</dimen>
     <dimen name="trailers_layout_margin_land">20dp</dimen>
-    <dimen name="reviews_layout_margin_land">20dp</dimen>
     <dimen name="trailers_divider_margin_bottom">15dp</dimen>
     <dimen name="reviews_divider_margin_bottom">15dp</dimen>
     <dimen name="divider_height">1dp</dimen>
+    <dimen name="divider_width">1dp</dimen>
     <dimen name="trailers_title_size">20sp</dimen>
     <dimen name="reviews_title_size">20sp</dimen>
     <dimen name="details_layout_padding_top_land">5dp</dimen>
@@ -58,4 +56,5 @@
     <dimen name="share_trailer_margin_end">30dp</dimen>
     <dimen name="trailer_number_tv_margin_top">8dp</dimen>
     <dimen name="trailer_number_tv_text_size">18sp</dimen>
+    <dimen name="trailer_list_item_margin">13dp</dimen>
 </resources>

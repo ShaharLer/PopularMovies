@@ -1,4 +1,4 @@
-package com.example.popularmovies;
+package com.example.popularmovies.ui;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -22,11 +21,14 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.popularmovies.R;
 import com.example.popularmovies.database.AppDatabase;
+import com.example.popularmovies.database.AppExecutors;
 import com.example.popularmovies.database.Movie;
+import com.example.popularmovies.database.MovieDetailsViewModel;
+import com.example.popularmovies.database.MovieDetailsViewModelFactory;
 import com.example.popularmovies.utils.JsonUtils;
 import com.example.popularmovies.utils.NetworkUtils;
-import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -85,12 +87,10 @@ public class MovieDetailsActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
-        Log.d("TEST (details)", "Inside onCreate");
 
         initAttributes();
 
         if (savedInstanceState != null && savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_OBJECT)) {
-            Log.d("TEST (details)", "savedInstanceState != null & all extra details were loaded");
             hideData();
             mMovie = savedInstanceState.getParcelable(SAVED_INSTANCE_MOVIE_OBJECT);
             if (savedInstanceState.containsKey(SAVED_INSTANCE_MOVIE_TRAILERS)) {
@@ -121,12 +121,6 @@ public class MovieDetailsActivity extends AppCompatActivity
         }
 
         loadMovieExtraData();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("TEST (details)", "Inside onDestroy");
     }
 
     private void initAttributes() {
@@ -185,10 +179,8 @@ public class MovieDetailsActivity extends AppCompatActivity
         LoaderManager loaderManager = getSupportLoaderManager();
         Loader<String> moviesDetailsLoader = loaderManager.getLoader(MOVIES_DETAILS_LOADER_ID);
         if (moviesDetailsLoader == null) {
-            Log.d("TEST (details)", "Calling initLoader inside: loadMovieExtraData");
             getSupportLoaderManager().initLoader(MOVIES_DETAILS_LOADER_ID, null, this);
         } else {
-            Log.d("TEST (details)", "Calling restartLoader inside: loadMovieExtraData");
             getSupportLoaderManager().restartLoader(MOVIES_DETAILS_LOADER_ID, null, this);
         }
     }
@@ -196,24 +188,19 @@ public class MovieDetailsActivity extends AppCompatActivity
     @NonNull
     @Override
     public Loader<Void> onCreateLoader(int id, @Nullable Bundle args) {
-        Log.d("TEST (details)", "Inside onCreateLoader");
         return new AsyncTaskLoader<Void>(this) {
 
             @Override
             protected void onStartLoading() {
                 if (mMovie.getRuntime() != null && mTrailers != null && mReviews != null) {
-                    Log.d("TEST (details)", "onStartLoading: all values are not null");
                     return;
                 }
                 hideData();
-                Log.d("TEST (details)", "onStartLoading: calling forceLoad()");
                 forceLoad();
             }
 
             @Override
             public Void loadInBackground() {
-                Log.d("TEST (details)", "loadInBackground");
-
                 try {
                     String urlPrefix = getResources().getString(R.string.movies_query_base_url) + mMovie.getId();
                     JsonUtils.parseMovieExtraDetails(getJsonFromHttpResponse(urlPrefix), mMovie);
@@ -224,7 +211,6 @@ public class MovieDetailsActivity extends AppCompatActivity
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
                 return null;
             }
 
@@ -237,13 +223,11 @@ public class MovieDetailsActivity extends AppCompatActivity
 
     @Override
     public void onLoadFinished(@NonNull Loader<Void> loader, Void data) {
-        Log.d("TEST (details)", "onLoadFinished");
         showData();
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Void> loader) {
-        Log.d("TEST (details)", "onLoaderReset");
     }
 
     private void hideData() {
@@ -266,17 +250,11 @@ public class MovieDetailsActivity extends AppCompatActivity
             mOriginalTitleTv.setVisibility(View.GONE);
         }
 
-        Picasso.get()
-                .load(mMovie.getPosterPath())
-                .error(R.mipmap.ic_image_not_found_foreground)
-                .into(mImageIv);
-
         String releaseYear = null;
         String releaseDate = mMovie.getReleaseDate();
         if (releaseDate != null && !releaseDate.isEmpty()) {
             releaseYear = releaseDate.substring(0, 4);
         }
-
         if (releaseYear != null && !releaseYear.isEmpty()) {
             mReleaseDateTv.setText(releaseYear);
         } else {

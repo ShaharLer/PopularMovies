@@ -1,9 +1,10 @@
-package com.example.popularmovies;
+package com.example.popularmovies.ui;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+
+import com.example.popularmovies.R;
 
 import java.util.List;
 
@@ -50,11 +51,8 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewVi
 
     class ReviewViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        ImageButton imageIb;
-
         ReviewViewHolder(@NonNull View itemView) {
             super(itemView);
-            imageIb = itemView.findViewById(R.id.review_image);
             itemView.setOnClickListener(this);
         }
 

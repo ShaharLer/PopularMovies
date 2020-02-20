@@ -1,11 +1,10 @@
-package com.example.popularmovies;
+package com.example.popularmovies.ui;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,6 +14,8 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 
+import com.example.popularmovies.R;
+import com.example.popularmovies.database.MainViewModel;
 import com.example.popularmovies.database.Movie;
 import com.example.popularmovies.utils.JsonUtils;
 import com.example.popularmovies.utils.NetworkUtils;
@@ -64,14 +65,13 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_list);
-        Log.d("TEST", "Starting onCreate");
 
         initAttributes();
+
         if (savedInstanceState != null
                 && savedInstanceState.containsKey(SAVED_INSTANCE_CHOSEN_CATEGORY)
                 && savedInstanceState.containsKey(SAVED_INSTANCE_MOVIES_LIST)) {
 
-            Log.d("TEST", "savedInstanceState != null");
             mUserCategoryChoice = savedInstanceState.getString(SAVED_INSTANCE_CHOSEN_CATEGORY);
             if (savedInstanceState.containsKey(SAVED_INSTANCE_FIRST_VISIBLE_POSITION)) {
                 int firstVisibleItemPosition = savedInstanceState.getInt(SAVED_INSTANCE_FIRST_VISIBLE_POSITION);
@@ -172,10 +172,8 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         LoaderManager loaderManager = getSupportLoaderManager();
         Loader<String> moviesSearchLoader = loaderManager.getLoader(MOVIES_SEARCH_LOADER_ID);
         if (moviesSearchLoader == null) {
-            Log.d("TEST", "Calling initLoader inside: loadMoviesData");
             getSupportLoaderManager().initLoader(MOVIES_SEARCH_LOADER_ID, null, this);
         } else {
-            Log.d("TEST", "Calling restartLoader inside: loadMoviesData");
             getSupportLoaderManager().restartLoader(MOVIES_SEARCH_LOADER_ID, null, this);
         }
     }
@@ -188,14 +186,12 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
                 @Override
                 public void onChanged(List<Movie> movies) {
                     if (getPrefSortCategory().equals(getString(R.string.favorites))) {
-                        Log.d("TEST", "Inside setupViewModel:onChanged");
                         mMovies = movies;
                         showData();
                     }
                 }
             });
         } else {
-            Log.d("TEST", "Inside setupViewModel: viewModel != null");
             mMovies = viewModel.getMovies().getValue();
             showData();
         }
@@ -204,20 +200,30 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     @NonNull
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, final Bundle args) {
-        Log.d("TEST", "Inside onCreateLoader");
         return new AsyncTaskLoader<List<Movie>>(this) {
 
             @Override
             protected void onStartLoading() {
+                /*
+                    In this method we understand whether we got here after a spinner choice, screen
+                    rotation or back from the movie details activity.
+                */
+
                 String prefSortCategory = getPrefSortCategory();
+
                 if (mMovies != null) {
+                    // Means we are after screen rotation / back from details activity (or both).
+                    // We now check if the user changed its spinner choice or not.
                     if (!prefSortCategory.equals(mUserCategoryChoice)) {
                         if (mSpinner == null) {
+                            // Means we are after screen rotation (either back from movie details activity or not)
                             mSpinnerChoiceTrigger = true;
                         } else {
+                            // Means we are  back from movie details activity
                             setSpinnerChoice(true);
                         }
                     } else if (!mFinishedLoading) {
+                        // Means the user didn't change it choice but a screen rotation was made
                         if (prefSortCategory.equals(getString(R.string.favorites))) {
                             setupViewModel();
                         } else {
@@ -227,6 +233,7 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
                         mAdapterFirstVisiblePosition = mLayoutManager.findFirstVisibleItemPosition();
                     }
                 } else {
+                    // Means a new movies list we be fetched
                     mAdapterFirstVisiblePosition = 0;
                     if (prefSortCategory.equals(getString(R.string.favorites))) {
                         setupViewModel();
@@ -238,7 +245,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
             @Override
             public List<Movie> loadInBackground() {
-                Log.d("TEST", "loadInBackground");
                 String categoryType = getPrefSortCategory();
                 if (categoryType == null || categoryType.isEmpty()) {
                     return null;
@@ -270,7 +276,6 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
     @Override
     public void onLoadFinished(@NonNull Loader<List<Movie>> loader, List<Movie> data) {
-        Log.d("TEST", "onLoadFinished");
         mMovies = data;
         showData();
     }
@@ -329,11 +334,9 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
         super.onSaveInstanceState(outState);
         if (mFinishedLoading) {
             outState.putString(SAVED_INSTANCE_CHOSEN_CATEGORY, getPrefSortCategory());
-
             if (mLayoutManager != null && mLayoutManager.findFirstVisibleItemPosition() > 0) {
                 outState.putInt(SAVED_INSTANCE_FIRST_VISIBLE_POSITION, mLayoutManager.findFirstVisibleItemPosition());
             }
-
             if (mMovies != null) {
                 outState.putParcelableArrayList(SAVED_INSTANCE_MOVIES_LIST, new ArrayList<>(mMovies));
             }

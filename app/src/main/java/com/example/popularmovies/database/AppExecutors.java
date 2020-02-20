@@ -1,4 +1,4 @@
-package com.example.popularmovies;
+package com.example.popularmovies.database;
 
 /*
  * Copyright (C) 2017 The Android Open Source Project
