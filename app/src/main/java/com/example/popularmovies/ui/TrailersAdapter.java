@@ -1,5 +1,21 @@
 package com.example.popularmovies.ui;
 
+/*
+ * Copyright (C) 2020 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,11 +28,12 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.TrailerViewHolder> {
 
     private static final String TRAILER_TITLE = "Trailer";
-
     private PlayTrailersHandler mPlayTrailerHandler;
     private ShareTrailersHandler mShareTrailerHandler;
     private List<String> mTrailersData;
@@ -79,16 +96,13 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     class TrailerViewHolder extends RecyclerView.ViewHolder {
 
-        ImageButton playTrailerIb;
-        ImageButton shareTrailerIb;
-        TextView trailerTitleTv;
+        @BindView(R.id.play_trailer)ImageButton playTrailerIb;
+        @BindView(R.id.share_trailer)ImageButton shareTrailerIb;
+        @BindView(R.id.trailer_number)TextView trailerTitleTv;
 
         TrailerViewHolder(@NonNull View itemView) {
             super(itemView);
-            playTrailerIb = itemView.findViewById(R.id.play_trailer);
-            shareTrailerIb = itemView.findViewById(R.id.share_trailer);
-            trailerTitleTv = itemView.findViewById(R.id.trailer_number);
+            ButterKnife.bind(this, itemView);
         }
     }
-
 }

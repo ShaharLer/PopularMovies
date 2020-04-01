@@ -1,5 +1,21 @@
 package com.example.popularmovies.ui;
 
+/*
+ * Copyright (C) 2020 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -50,6 +66,8 @@ import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MovieDetailsActivity extends AppCompatActivity
         implements ReviewsAdapter.ReviewsAdapterOnClickHandler,
@@ -75,18 +93,25 @@ public class MovieDetailsActivity extends AppCompatActivity
     private AppDatabase mDb;
     private Movie mMovie;
     private List<String> mTrailers, mReviews;
-    private LinearLayout mFullDetailsLayout, mTrailerLayout, mReviewsLayout;
-    private ProgressBar mProgressBar;
-    private TextView mOriginalTitleTv, mReleaseDateTv, mRuntimeTv, mVoteAverageTv, mOverviewTv;
-    private Button mFavoriteButton;
-    private ImageView mImageIv;
     private TrailersAdapter mTrailersAdapter;
     private ReviewsAdapter mReviewsAdapter;
+    @BindView(R.id.full_details_layout) LinearLayout mFullDetailsLayout;
+    @BindView(R.id.trailer_layout) LinearLayout mTrailerLayout;
+    @BindView(R.id.reviews_layout) LinearLayout mReviewsLayout;
+    @BindView(R.id.pb_loading_indicator_details_activity) ProgressBar mProgressBar;
+    @BindView(R.id.original_title) TextView mOriginalTitleTv;
+    @BindView(R.id.release_date) TextView mReleaseDateTv;
+    @BindView(R.id.runtime) TextView mRuntimeTv;
+    @BindView(R.id.vote_average) TextView mVoteAverageTv;
+    @BindView(R.id.overview) TextView mOverviewTv;
+    @BindView(R.id.mark_as_favorite) Button mFavoriteButton;
+    @BindView(R.id.movie_details_image) ImageView mImageIv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
+        ButterKnife.bind(this);
 
         initAttributes();
 
@@ -126,19 +151,9 @@ public class MovieDetailsActivity extends AppCompatActivity
     private void initAttributes() {
         mDb = AppDatabase.getInstance(getApplicationContext());
         mMovieCategoriesList = Arrays.asList(getResources().getStringArray(R.array.movie_categories_array));
-        mTrailerLayout = findViewById(R.id.trailer_layout);
-        mReviewsLayout = findViewById(R.id.reviews_layout);
-        mProgressBar = findViewById(R.id.pb_loading_indicator_details_activity);
-        mOriginalTitleTv = findViewById(R.id.original_title);
-        mReleaseDateTv = findViewById(R.id.release_date);
-        mRuntimeTv = findViewById(R.id.runtime);
-        mVoteAverageTv = findViewById(R.id.vote_average);
-        mOverviewTv = findViewById(R.id.overview);
-        mFavoriteButton = findViewById(R.id.mark_as_favorite);
-        mImageIv = findViewById(R.id.movie_details_image);
 
-        findViewById(R.id.rv_trailers).setFocusable(false);
         RecyclerView mTrailersRecyclerView = findViewById(R.id.rv_trailers);
+        mTrailersRecyclerView.setFocusable(false);
         mTrailersRecyclerView.setHasFixedSize(true);
         mTrailersRecyclerView.addItemDecoration(new DividerItemDecorator(
                 ContextCompat.getDrawable(mTrailersRecyclerView.getContext(), R.drawable.divider)));
@@ -146,8 +161,8 @@ public class MovieDetailsActivity extends AppCompatActivity
         mTrailersAdapter = new TrailersAdapter(this, this);
         mTrailersRecyclerView.setAdapter(mTrailersAdapter);
 
-        findViewById(R.id.rv_reviews).setFocusable(false);
         RecyclerView mReviewsRecyclerView = findViewById(R.id.rv_reviews);
+        mReviewsRecyclerView.setFocusable(false);
         mReviewsRecyclerView.setHasFixedSize(true);
         int gridColumnsNumber = REVIEWS_COLUMNS_PORTRAIT; // default
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
@@ -157,8 +172,7 @@ public class MovieDetailsActivity extends AppCompatActivity
         mReviewsAdapter = new ReviewsAdapter(this);
         mReviewsRecyclerView.setAdapter(mReviewsAdapter);
 
-        findViewById(R.id.full_details_layout).requestFocus();
-        mFullDetailsLayout = findViewById(R.id.full_details_layout);
+        mFullDetailsLayout.requestFocus();
     }
 
     private void closeOnError() {

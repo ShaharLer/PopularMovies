@@ -1,5 +1,21 @@
 package com.example.popularmovies.ui;
 
+/*
+ * Copyright (C) 2020 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,6 +51,8 @@ import androidx.loader.content.Loader;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class MoviesListActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler,
         LoaderManager.LoaderCallbacks<List<Movie>> {
@@ -47,24 +65,25 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
     private static final int PORTRAIT_MOVIES_COLUMNS = 2;
     private static final int LANDSCAPE_MOVIES_COLUMNS = 4;
     private static final int MOVIES_SEARCH_LOADER_ID = 24;
-    private boolean mFinishedLoading;
-    private boolean mSpinnerChoiceTrigger;
-    private String mUserCategoryChoice;
-    private int mAdapterFirstVisiblePosition;
+    private boolean mFinishedLoading = false;
+    private boolean mSpinnerChoiceTrigger = false;
+    private int mAdapterFirstVisiblePosition = 0;
     private int moviesColumns;
+    private String mUserCategoryChoice;
     private List<Movie> mMovies;
     private Spinner mSpinner;
     private MoviesAdapter mMoviesAdapter;
-    private ProgressBar mProgressBar;
-    private LinearLayout mErrorLayout;
     private GridLayoutManager mLayoutManager;
-    private RecyclerView mMoviesRecyclerView;
     private MainViewModel viewModel;
+    @BindView(R.id.error_layout) LinearLayout mErrorLayout;
+    @BindView(R.id.pb_loading_indicator) ProgressBar mProgressBar;
+    @BindView(R.id.rv_movies) RecyclerView mMoviesRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movies_list);
+        ButterKnife.bind(this);
 
         initAttributes();
 
@@ -85,17 +104,9 @@ public class MoviesListActivity extends AppCompatActivity implements MoviesAdapt
 
     private void initAttributes() {
         // initialize variables
-        mFinishedLoading = false;
-        mSpinnerChoiceTrigger = false;
         mUserCategoryChoice = getPrefSortCategory();
-        mAdapterFirstVisiblePosition = 0;
         moviesColumns = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ?
                 PORTRAIT_MOVIES_COLUMNS : LANDSCAPE_MOVIES_COLUMNS;
-
-        // initialize views
-        mErrorLayout = findViewById(R.id.error_layout);
-        mProgressBar = findViewById(R.id.pb_loading_indicator);
-        mMoviesRecyclerView = findViewById(R.id.rv_movies);
         mMoviesRecyclerView.setHasFixedSize(true);
         mLayoutManager = new GridLayoutManager(this, moviesColumns);
         mMoviesRecyclerView.setLayoutManager(mLayoutManager);
