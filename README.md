@@ -14,7 +14,7 @@ A favorites sort criteria is also possible in the spinner of app main screen (re
 ## Isseus
 The app uses the API of themoviedb.org, with a unique API key.
 In order to keep it safe (and not breaking the Terms of Service), after cloning the repo, an API key should be entered inside **string.xml** file:
-><string name="api_key">enter_api_key</string>
+`<string name="api_key">enter_api_key</string>`
 
 ## License
 Licensed under the Apache License, Version 2.0
